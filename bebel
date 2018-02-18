@@ -19,7 +19,8 @@ _klasse Map(Auflösung):
 _klasse main:
 	map = Map(Auflösung)
 	worms = Worm()
-	ui = Ui(map, worms)
+	gui = GUI(map, worms)
+	mainLoop() Fragt periodisch User-Input ab und aktualisiert die GUI
 	
 _klasse Size:
 	int __x
@@ -57,8 +58,13 @@ _klasse Weapon:
 	damage()
 	flugbahn()
 	
-_klasse Ui(Map, Worm):
-	render_map()
+_klasse GUI(colourMap, Worm):
+	update() Ruft renderMap und renderWorms auf
+	renderMap(colourMap)
+	renderWorms(worms)
+	
+_klasse UI(): Prozessiert User-Input
+	getEvents()
 
 Meylensteyne:
 * Map Generator (eben) und anzeigen
@@ -82,8 +88,3 @@ Meylensteyne:
 
 * Mehrere Würmer auf der Map mit Wechselfunktion
 * Zeitanzeige
-
-
-
-
-
