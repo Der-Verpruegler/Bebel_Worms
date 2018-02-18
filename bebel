@@ -1,0 +1,89 @@
+- pygame
+- numpy arrays als Statespeicher
+- Github oder GitLab?
+
+
+- Map-Größe in px: 1024x768
+- [0,0] [0,1]
+- [1,0] [1,1]
+- Check @ Numpy wie die Dims sind
+- Python 3
+- config-file für Farben etc.
+
+
+Basisfunktionalitäten:
+_klasse Map(Auflösung):
+	*map_generator() -> nparray & Field[]
+	map[0,1] = Field(...)
+
+_klasse main:
+	map = Map(Auflösung)
+	worms = Worm()
+	ui = Ui(map, worms)
+	
+_klasse Size:
+	int __x
+	int __y
+
+_klasse Coordinates:
+	int __x
+	int __y
+
+_klasse Terrain:
+	dict terrain {key = tuple colour: value = bool solid}
+		
+_klasse Field:
+	Size __size ""how big is one pixel""
+	Coordinates __coordinates 
+	Terrain terrain
+
+_klasse Worm: ""Erzeugt Würmerliste""
+	Coordinates coordinates "" links oben ""
+	int health
+	Size __size
+	move(key_input):
+		Kollision(Coordinates, Size)
+		set_coordinates()
+		
+	bool selected
+	int speed
+
+_klasse Blaeher:
+	list inventar
+	dict waffen
+	str selected_weapon
+
+_klasse Weapon:
+	damage()
+	flugbahn()
+	
+_klasse Ui(Map, Worm):
+	render_map()
+
+Meylensteyne:
+* Map Generator (eben) und anzeigen
+	- Config-File für Farbendefinition
+	- map_generate() 
+	- map in ui erzeugen
+* Wurm erzeugen und anzeigen und horizontal bewegen aber nicht außerhalb der Welt
+	- worm_generate()
+	- worm in ui ezeugen
+* Implementieren und Experimentieren mit Worm.Speed
+	- vorher mergen
+	- refactoring & review
+	- mit speed testen
+
+
+* Map mit Altitude
+* Worm mit Kollisionserkennung und Sprungfunktion
+* Experimentieren mit Gravitation
+
+
+
+* Mehrere Würmer auf der Map mit Wechselfunktion
+* Zeitanzeige
+
+
+
+
+
