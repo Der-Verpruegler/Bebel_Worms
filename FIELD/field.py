@@ -1,7 +1,7 @@
 import config
 
 class Terrain():
-    # To Do: Auslagern des Krams in Config
+    # To Do: Auslagern des Krams in Config-Json
     def __init__(self, terrain_type):
         if terrain_type in ['GRASS', 'STONE', 'ROCK']:
             self.solid = True
@@ -14,6 +14,7 @@ class Terrain():
     
 
 class Size:
+    """ Object size, specifiy either height and width, or square """
     def __init__(self, height=1, width=1, square=1):
         self.height = height
         self.width = width
@@ -26,10 +27,9 @@ class Coordinates:
         self.y = y
     
 
-class Field(Size, Terrain, Coordinates):
-    
+class Field(Size, Terrain, Coordinates):    
     def __init__(self, square, terrain_type, coordinates):
-        Size.__init__(self, height=1 , width=1 , square=1)
+        Size.__init__(self, height=1, width=1, square=1)
         Terrain.__init__(self, terrain_type)
         Coordinates.__init__(self, coordinates[0], coordinates[1])
 
