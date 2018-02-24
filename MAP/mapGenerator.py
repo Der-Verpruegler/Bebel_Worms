@@ -126,10 +126,7 @@ class MapBackend(MapGenerator):
         # Update Time elapsed (hh:mm:ss.ms) 0:00:20.797752, 0:00:01.767589
         self.px_set_colour(i, j, field.Field(map_granularity, field_type, [i, j]).colour)
         self.px_set_solidity(i, j, field.Field(map_granularity, field_type, [i, j]).solid)
-        
-    
-    
-            
+
     
 # Testing
 start_time = datetime.now() 
