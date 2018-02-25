@@ -15,10 +15,14 @@ def main():
 	mainLoop(clock, gui, ui)
 	
 def mainLoop(clock, gui, ui):
+	map = []
+	worms = []
 	running = True
+	changed = True
 	while(running):
 		clock.tick(config.ITERATIONSPERSECOND)
 		running = ui.getEvents()
-		gui.update()
+		gui.update(changed, map, worms)
+		changed = False
 	
 main()

@@ -1,17 +1,20 @@
 import config
 
+import numpy
+
 class mainRenderer:
 	def __init__(self, pygame):
 		self._pygame = pygame
-		self._renderArea = [config.RENDERAREAWIDTH, config.RENDERAREAHEIGHT]
-		self._screen = pygame.display.set_mode(self._renderArea)
+		self._screen = self._pygame.display.set_mode([config.RENDERAREAWIDTH, config.RENDERAREAHEIGHT])
 		
-	def update(self):
-		self.renderMap()
-		self.renderWorms()
+	def update(self, mapHasChanged, map, worms):
+		if(mapHasChanged):
+			self.renderMap(map)
+		self.renderWorms(worms)
+		self._pygame.display.flip()
 		
-	def renderMap(self):
-		pass
+	def renderMap(self, map):
+		self._pygame.surfarray.blit_array(self._screen, map)
 		
-	def renderWorms(self):
+	def renderWorms(self, worms):
 		pass
