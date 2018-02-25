@@ -15,17 +15,15 @@ def main():
 	mainLoop(clock, gui, ui)
 	
 def mainLoop(clock, gui, ui):
-    running = True
-    while(running):
-        
-        clock.tick(config.ITERATIONSPERSECOND)
-        running = ui.getEvents()
-        # Add exit option
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT: 
-                break 
-        gui.update()
-    # Clean exit    
-    pygame.quit()    
+	map = []
+	worms = []
+	running = True
+	changed = True
+	while(running):
+		clock.tick(config.ITERATIONSPERSECOND)
+		running = ui.getEvents()
+		gui.update(changed, map, worms)
+		changed = False
+	pygame.quit()
 
 main()
