@@ -7,7 +7,7 @@ class MapGenerator:
         if config.GENERATIONSTYLE == "Plain ground":
             self.plain_ground(colours, solidity)
     
-    def generate_field(self, row, col, terrain_type, colours, solidity):
+    def generate_field(self, col, row, terrain_type, colours, solidity):
         colours[col, row] = config.terrain_types[terrain_type]["colour"]
         solidity[col, row] = config.terrain_types[terrain_type]["solid"]
     
@@ -18,9 +18,9 @@ class MapGenerator:
         for row in range(config.RENDERAREAHEIGHT):
             for col in range(config.RENDERAREAWIDTH):
                 if row < config.RENDERAREAHEIGHT / 2:
-                    self.generate_field(row, col, "AIR", colours, solidity)
+                    self.generate_field(col, row, "AIR", colours, solidity)
                 else:
-                    self.generate_field(row, col, "GRASS", colours, solidity)
+                    self.generate_field(col, row, "GRASS", colours, solidity)
         
     
     def hilly_ground(self):
@@ -37,24 +37,28 @@ class MapBackend:
         
         MapGenerator(self.colours, self.solidity)
      
-    def px_get_solidity(self, i, j):
-        """ Extracts solidity of a pixel """        
-        return self.solidity[i,j]
+    def px_get_solidity(self, col, row):
+        """ Extracts solidity of a pixel """
+        try: 
+            value = self.solidity[col,row]
+        except IndexError:
+            value = None
+        return value
     
-    def px_get_colour(self, i, j):
+    def px_get_colour(self, col, row):
         """ Extracts colour of a pixel """
-        return self.colours[i,j]
+        return self.colours[col,row]
 
-    def px_set_solidity(self, i, j, boolean):
+    def px_set_solidity(self, col, row, boolean):
         """ Should only be used in test cases? """
-        self.solidity[i,j] = boolean
+        self.solidity[col,row] = boolean
         
-    def px_set_colour(self, i, j, colour):
+    def px_set_colour(self, col, row, colour):
         """ Should only be used in test cases? """
-        self.colours[i,j] = colour
+        self.colours[col,row] = colour
         
-    def px_set_field(self, i, j, field_type):
+    def px_set_field(self, col, row, field_type):
         """ Overwrites Field """
-        self.px_set_colour(i, j, config.terrain_types[field_type]["colour"])
-        self.px_set_solidity(i, j, config.terrain_types[field_type]["solid"])
+        self.px_set_colour(col, row, config.terrain_types[field_type]["colour"])
+        self.px_set_solidity(col, row, config.terrain_types[field_type]["solid"])
 
