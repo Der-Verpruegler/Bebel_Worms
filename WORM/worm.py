@@ -4,8 +4,8 @@ np.random.seed(299)
 
 class Worm():
     def __init__(self):
-        self.width = 10 #temp
-        self.height = 20 #temp
+        self.width = config.WORM_WIDTH
+        self.height = config.WORM_HEIGHT
         
         self.corner_col, self.corner_row = self.spawn()
 
@@ -36,8 +36,8 @@ class Worm():
                 valid_pos = True
             # If no collision, bring worm down by 1 px
             else:
-                corner_row +=1
-        
+                corner_row +=1                
+              
         return corner_col, corner_row
 
 
@@ -68,12 +68,4 @@ class Worm():
             hitbox = self.get_hitbox(col=self.corner_col+1, row=self.corner_row)
             if self.check_box_collision(hitbox) == False:
                 self.corner_col += 1
-
-#map = MapBackend()        
-#w = Worm()
-#w.spawn()
-#for i in range(1000):
-    #print(w.corner_col, w.corner_row)
-    #w.move("right")
-
         
