@@ -8,8 +8,8 @@ class mainRenderer:
 		self._screen = self._pygame.display.set_mode([config.RENDERAREAWIDTH, config.RENDERAREAHEIGHT])
 		
 	def update(self, mapHasChanged, map, worms):
-		if(mapHasChanged):
-			self.renderMap(map)
+		#if(mapHasChanged):
+		self.renderMap(map)
 		self.renderWorms(worms)
 		self._pygame.display.flip()
 		
@@ -17,4 +17,5 @@ class mainRenderer:
 		self._pygame.surfarray.blit_array(self._screen, map)
 		
 	def renderWorms(self, worms):
-		pass
+		for worm in worms:
+			self._pygame.draw.rect(self._screen, config.terrain_types["WORM"]["colour"], (worm.corner_col, worm.corner_row, worm.width, worm.height))
