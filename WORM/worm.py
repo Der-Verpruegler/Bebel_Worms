@@ -50,7 +50,7 @@ class Worm():
     def check_for_box_collision(self, box):
         """ Checks if hitbox touches solid pixel"""
         # Throw exception message if out of map, should be avoided
-        if box[0][0] < 0: or 
+        if box[0][0] < 0:
             raise Exception("Out of Map, box[0][0]:" + str(box[0][0]))
         if box[1][0] > config.RENDERAREAWIDTH:
             raise Exception("Out of Map, box[1][0]:" + str(box[1][0]))
@@ -71,7 +71,6 @@ class Worm():
         elif direction=="right":
             # Catch border of map
             if not self.corner_col+1 > (config.RENDERAREAWIDTH-config.WORM_WIDTH):
-                # If move is permitted
                 hitbox = self.get_hitbox(col=self.corner_col+1, row=self.corner_row)
                 if not self.check_for_box_collision(hitbox):
                     self.corner_col += 1
