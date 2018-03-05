@@ -8,6 +8,7 @@ import config
 from GUI import mainRenderer
 from UI import userListener
 from MAP import mapGenerator
+from WORM import worm
 
 running = False
 changed = False
