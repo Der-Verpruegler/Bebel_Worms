@@ -39,12 +39,8 @@ class MapBackend:
      
     def px_get_solidity(self, col, row):
         """ Extracts solidity of a pixel """
-        try: 
-            value = self.solidity[col,row]
-        except IndexError:
-            value = None
-        return value
-    
+        return self.solidity[col,row]
+
     def px_get_colour(self, col, row):
         """ Extracts colour of a pixel """
         return self.colours[col,row]
@@ -52,11 +48,11 @@ class MapBackend:
     def px_set_solidity(self, col, row, boolean):
         """ Should only be used in test cases? """
         self.solidity[col,row] = boolean
-        
+
     def px_set_colour(self, col, row, colour):
         """ Should only be used in test cases? """
         self.colours[col,row] = colour
-        
+
     def px_set_field(self, col, row, field_type):
         """ Overwrites Field """
         self.px_set_colour(col, row, config.terrain_types[field_type]["colour"])
