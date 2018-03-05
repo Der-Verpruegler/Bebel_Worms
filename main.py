@@ -9,15 +9,15 @@ from GUI import mainRenderer
 from UI import userListener
 from MAP import mapGenerator
 
-running = True
+running = False
+changed = False
 
 def main():
 	pygame.init()
 	mainLoop()
 	
 def outputLoop(gui, map, worms):
-	global running
-	changed = True
+	global running, changed
 
 	while running:
 		time.sleep(0.02)
@@ -26,25 +26,24 @@ def outputLoop(gui, map, worms):
 	return
 		
 def inputLoop(ui):
-	global running
+	global running, changed
+	
 	while running:
 		time.sleep(0.005)
-		event = pygame.event.poll()
-		if event.type == pygame.QUIT:
-			running = False
-		if event.type == pygame.K_LEFT:
-			print(event)
-		elif event.type == pygame.K_RIGHT:
-			print(event)
-		elif event.type == pygame.K_TAB:
-			print(event)
+		running = ui.getNextEvent()
 	return
 	
 def mainLoop():
+	global running, changed
+	
 	gui = mainRenderer.mainRenderer(pygame)
 	ui = userListener.userListener(pygame)
 	map = mapGenerator.MapBackend()
 	worms = []
+	
+	running = True
+	changed = True
+	
 	outputThread = threading.Thread(target=outputLoop, args=(gui, map, worms,))
 	
 	outputThread.start()
