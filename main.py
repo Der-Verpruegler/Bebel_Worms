@@ -12,8 +12,7 @@ from MAP import mapGenerator
 from WORM import worm
 
 running = False
-changed = False
-worms = np.empty(1, dtype=worm.Worm)
+worms = np.empty(config.NUMWORMS, dtype=worm.Worm)
 map = []
 
 def main():
@@ -21,22 +20,21 @@ def main():
 	mainLoop()
 	
 def generateWorms():
-	global worms, map
+	global map, worms
 
 	for i in range(config.NUMWORMS):
 		worms[i] = worm.Worm(map)
 	
 def outputLoop(gui):
-	global running, changed, worms, map
+	global running, map, worms
 
 	while running:
 		time.sleep(0.01)
-		gui.update(changed, map.colours, worms)
-		changed = False
+		gui.update(map.colours, worms)
 	return
 		
 def inputLoop(ui, worms):
-	global running, changed
+	global running
 	
 	while running:
 		time.sleep(0.005)
@@ -44,7 +42,7 @@ def inputLoop(ui, worms):
 	return
 	
 def mainLoop():
-	global running, changed, map, worms
+	global running, map, worms
 	
 	map = mapGenerator.MapBackend()
 	generateWorms()
@@ -53,7 +51,6 @@ def mainLoop():
 	ui = userListener.userListener(pygame, worms)
 
 	running = True
-	changed = True
 	
 	outputThread = threading.Thread(target=outputLoop, args=(gui,))
 	

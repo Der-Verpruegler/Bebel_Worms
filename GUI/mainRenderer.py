@@ -7,8 +7,7 @@ class mainRenderer:
 		self._pygame = pygame
 		self._screen = self._pygame.display.set_mode([config.RENDERAREAWIDTH, config.RENDERAREAHEIGHT])
 		
-	def update(self, mapHasChanged, map, worms):
-		#if(mapHasChanged):
+	def update(self, map, worms):
 		self.renderMap(map)
 		self.renderWorms(worms)
 		self._pygame.display.flip()
