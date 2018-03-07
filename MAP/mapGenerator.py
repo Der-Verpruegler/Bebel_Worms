@@ -7,6 +7,8 @@ class MapGenerator:
     """ Generates an initial map and provides access functions to inherit """
     def __init__(self, colours, solidity):
         if config.GENERATIONSTYLE == "Plain ground":
+            plain_ground(colours, solidity)
+        if config.GENERATIONSTYLE == "Hilly round":
             self.hilly_ground(colours, solidity)
 
     def generate_field(self, col, row, terrain_type, colours, solidity):
