@@ -1,15 +1,19 @@
 class userListener:
-	def __init__(self, pygame):
+	def __init__(self, pygame, worms):
 		self._pygame = pygame
+		self.worms = worms
 	
-	def getEvents(self):
-		for event in self._pygame.event.get():
-			if event.type == self._pygame.QUIT:
-				return False
-			elif event.type == self._pygame.K_LEFT:
-				pass
-			elif event.type == self._pygame.K_RIGHT:
-				pass
-			elif event.type == self._pygame.K_TAB:
-				pass
+	def getNextEvent(self, worms):
+		event = self._pygame.event.poll()
+		if event.type == self._pygame.QUIT:
+			return False
+		pressed = self._pygame.key.get_pressed()
+		if pressed[self._pygame.K_LEFT]:
+			self.worms[0].move("left")
+		elif pressed[self._pygame.K_RIGHT]:
+			self.worms[0].move("right")
+		elif pressed[self._pygame.K_SPACE]:
+			pass
+		elif pressed[self._pygame.K_TAB]:
+			pass
 		return True

@@ -1,5 +1,9 @@
 #! python
+
+import threading 
+import time
 import pygame
+import numpy as np
 
 import config
 from GUI import mainRenderer
@@ -7,26 +11,53 @@ from UI import userListener
 from MAP import mapGenerator
 from WORM import worm
 
+running = False
+worms = np.empty(config.NUMWORMS, dtype=worm.Worm)
+map = []
+
 def main():
 	pygame.init()
+	mainLoop()
 	
-	clock = pygame.time.Clock()
+def generateWorms():
+	global map, worms
 
-	gui = mainRenderer.mainRenderer(pygame)
-	ui = userListener.userListener(pygame)
+	for i in range(config.NUMWORMS):
+		worms[i] = worm.Worm(map)
 	
-	mainLoop(clock, gui, ui)
+def outputLoop(gui):
+	global running, map, worms
+
+	while running:
+		time.sleep(0.01)
+		gui.update(map.colours, worms)
+	return
+		
+def inputLoop(ui, worms):
+	global running
 	
-def mainLoop(clock, gui, ui):
+	while running:
+		time.sleep(0.005)
+		running = ui.getNextEvent(worms)
+	return
+	
+def mainLoop():
+	global running, map, worms
+	
 	map = mapGenerator.MapBackend()
-	worms = []
+	generateWorms()
+	
+	gui = mainRenderer.mainRenderer(pygame)
+	ui = userListener.userListener(pygame, worms)
+
 	running = True
-	changed = True
-	while(running):
-		clock.tick(config.ITERATIONSPERSECOND)
-		running = ui.getEvents()
-		gui.update(changed, map.colours, worms)
-		changed = False
+	
+	outputThread = threading.Thread(target=outputLoop, args=(gui,))
+	
+	outputThread.start()
+	inputLoop(ui, worms)
+	outputThread.join()
+	
 	pygame.quit()
 
 main()
