@@ -1,5 +1,6 @@
 # pylint: disable=maybe-no-member
 import config
+import math
 import numpy as np
 
 class MapGenerator:
@@ -11,6 +12,7 @@ class MapGenerator:
     def generate_field(self, col, row, terrain_type, colours, solidity):
         colours[col, row] = config.terrain_types[terrain_type]["colour"]
         solidity[col, row] = config.terrain_types[terrain_type]["solid"]
+
 
     def plain_ground(self, colours, solidity):
         """ Creates a simple map, that is horizontal and split
@@ -25,11 +27,11 @@ class MapGenerator:
 
 
     def hilly_ground(self, colours, solidity):
-        """ Creates a simple map, that is hilly. """
-        process = np.random.randint(0, config.RENDERAREAHEIGHT, size=config.RENDERAREAWIDTH)
-        process = self.smoother(process, 20)
-        process = self.blocker(process, 20)
-        
+        """ Creates a simple map, that is hilly. """      
+        process = np.random.randint(0, config.RENDERAREAHEIGHT, config.RENDERAREAWIDTH)
+        process = self.smoother(process, 2)
+        process = self.blocker(process, 10)
+        process = self.smoother(process, 10)
         for col in range(config.RENDERAREAWIDTH):         
             split = process[col]
             for row in range(config.RENDERAREAHEIGHT):                
@@ -40,16 +42,28 @@ class MapGenerator:
 
 
     def smoother(self, process, window):
-        for i in range(len(process) - window):
-            process[i] = np.average(process[i+1:i+window])
+        """ Smoothes by averaging in window"""
+        for i in range(len(process)):
+            if i > (len(process) - window):
+                process[i] = np.average(process[i-window:i])
+            if i < window:
+                process[i] = np.average(process[i:i+window])
+            else:
+                process[i] = np.average(process[i-window:i+window])
         return process
     
+    
     def blocker(self, process, window):
+        """ Evens ground out by proceeding in blocks """
         chunks = int(config.RENDERAREAWIDTH/window)
-        split = np.linspace(0, config.RENDERAREAWIDTH, chunks)
+        split = np.linspace(0, config.RENDERAREAWIDTH, chunks).astype(int)
         for i in range(len(split)-1):
-            local_average = np.average(process[int(split[i]):int(split[i+1])])
-            process[int(split[i]):int(split[i+1])] = local_average
+            if np.random.randint(0,2) == 1:
+                local_average = np.average(process[int(split[i]):int(split[i+1])])
+                process[int(split[i]):int(split[i+1])] = local_average
+            else:                
+                local_median = np.median(process[int(split[i]):int(split[i+1])])
+                process[int(split[i]):int(split[i+1])] = local_median                    
         return process
 
 
