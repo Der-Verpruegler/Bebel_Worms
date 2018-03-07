@@ -25,7 +25,7 @@ class Worm():
 				self.corner_col = guess
 				self.corner_row = 0
 
-        # Respect gravity
+		# Respect gravity
 		valid_pos = False
 		while valid_pos == False:
 			# Get hitbox for current pos lowered by 1 px
@@ -63,14 +63,26 @@ class Worm():
 	def move(self, direction):
 		if direction=="left":
 			# Catch border of map
-			if not self.corner_col-1 < 0:                
-				hitbox = self.get_hitbox(col=self.corner_col-1, row=self.corner_row)
-				if not self.check_for_box_collision(hitbox):
-					self.corner_col -= 1
+			if not self.corner_col-1 < 0:
+				j = 0
+				while j < config.WORM_VERT_GAIN:      
+					hitbox = self.get_hitbox(col=self.corner_col-1, row=self.corner_row-j)
+					if not self.check_for_box_collision(hitbox):
+						self.corner_col -= 1
+						self.corner_row -= j
+						break
+					j +=1
 
 		elif direction=="right":
 			# Catch border of map
 			if not self.corner_col+1 > (config.RENDERAREAWIDTH-config.WORM_WIDTH):
-				hitbox = self.get_hitbox(col=self.corner_col+1, row=self.corner_row)
-				if not self.check_for_box_collision(hitbox):
-					self.corner_col += 1
+				j = 0
+				while j < config.WORM_VERT_GAIN:
+					hitbox = self.get_hitbox(col=self.corner_col+1, row=self.corner_row-j)                
+					if not self.check_for_box_collision(hitbox):
+						self.corner_col += 1
+						self.corner_row -= j
+						break
+					j +=1
+
+				  
