@@ -39,6 +39,7 @@ def inputLoop(ui, worms):
 	while running:
 		time.sleep(0.005)
 		running = ui.getNextEvent(worms)
+		print(worms[0].corner_col, worms[0].corner_row)
 	return
 	
 def mainLoop():
