@@ -4,7 +4,7 @@ import config
 
 
 class MapGenerator:
-    """ Generates an initial map and provides access functions to inherit """
+    """ Generates an initial map """
     def __init__(self, colours, solidity):
         if config.GENERATIONSTYLE == "Proving Grounds":
             self.style_proving_grounds(colours, solidity)
@@ -18,31 +18,24 @@ class MapGenerator:
         solidity[col, row] = config.terrain_types[terrain_type]["solid"]
 
 
-    def field_filler(self, process_chain, colours, solidity):
+    def field_filler(self, process, colours, solidity):
+        """ Fills the map with fields, regarding the solidity split 
+            pattern (process) and adds random jitter """
+            
         for col in range(config.RENDERAREAWIDTH):
-            split = process_chain[col]
-            for row in range(config.RENDERAREAHEIGHT):
-                
+            split = process[col]
+            for row in range(config.RENDERAREAHEIGHT):                
                 if row < split:
-                    choices = ["AIR1", "AIR2", "AIR3"]
-                    choice = np.random.choice(choices)
-                    self.generate_field(col, row, choice, colours, solidity)
-                    
+                    choice = np.random.choice(["AIR" + str(i) for i in range(1, config.VAR_AIR)])                    
                 elif (row - np.random.randint(5, 10)) < split:
-                    self.generate_field(col, row, "GRASS", colours, solidity)
-                    
+                    choice = "GRASS"                    
                 elif (row - np.random.randint(18, 20)) < split:
-                    self.generate_field(col, row, "DARKGRASS", colours, solidity)
-                    
+                    choice = "DARKGRASS"                    
                 elif (config.RENDERAREAHEIGHT - np.random.randint(10, np.random.randint(30, 60))) > row:
-                    choices = ["SOIL1", "SOIL2", "SOIL3", "SOIL4", "SOIL5", "SOIL6"]
-                    choice = np.random.choice(choices)
-                    self.generate_field(col, row, choice, colours, solidity)
-                    
+                    choice = np.random.choice(["SOIL" + str(i) for i in range(1, config.VAR_SOIL)])
                 else:
-                    choices = ["EARTHCORE1", "EARTHCORE2", "EARTHCORE3", "EARTHCORE4"]
-                    choice = np.random.choice(choices)
-                    self.generate_field(col, row, choice, colours, solidity)                    
+                    choice = np.random.choice(["EARTHCORE" + str(i) for i in range(1, config.VAR_EARTHCORE)])    
+                self.generate_field(col, row, choice, colours, solidity)
 
 
     def style_proving_grounds(self, colours, solidity):
@@ -77,21 +70,21 @@ class MapGenerator:
         chunks = int(config.RENDERAREAWIDTH/window)
         split = np.linspace(0, config.RENDERAREAWIDTH, chunks).astype(int)
         for i in range(len(split)-1):
+            sub_ = process[int(split[i]):int(split[i+1])]
             if np.random.randint(0, 2) == 1:
-                local_average = np.max(process[int(split[i]):int(split[i+1])])
-                process[int(split[i]):int(split[i+1])] = local_average
+                process[split[i]:split[i+1]] = np.max(sub_)
             else:
-                local_median = np.min(process[int(split[i]):int(split[i+1])])
-                process[int(split[i]):int(split[i+1])] = local_median
+                process[split[i]:split[i+1]] = np.min(sub_)
         return process
 
 
     def smoother(self, process, window):
         """ Smoothes by averaging in window"""
-        for i in range(len(process)):
-            if i > (len(process) - window):
-                process[i] = np.average(process[i-window:i])
-            if i < window:
+        proc_leng = len(process)
+        for i in range(proc_leng):
+            if i > (proc_leng - window):
+                process[i] = np.average(process[i-window:proc_leng])
+            elif i < window:
                 process[i] = np.average(process[0:i+window])
             else:
                 process[i] = np.average(process[i-window:i+window])
@@ -103,12 +96,11 @@ class MapGenerator:
         chunks = int(config.RENDERAREAWIDTH/window)
         split = np.linspace(0, config.RENDERAREAWIDTH, chunks).astype(int)
         for i in range(len(split)-1):
+            sub_ = process[int(split[i]):int(split[i+1])]
             if np.random.randint(0, 2) == 1:
-                local_average = np.average(process[int(split[i]):int(split[i+1])])
-                process[int(split[i]):int(split[i+1])] = local_average
+                process[int(split[i]):int(split[i+1])] = np.average(sub_)
             else:
-                local_median = np.median(process[int(split[i]):int(split[i+1])])
-                process[int(split[i]):int(split[i+1])] = local_median
+                process[int(split[i]):int(split[i+1])] = np.median(sub_)
         return process
 
 

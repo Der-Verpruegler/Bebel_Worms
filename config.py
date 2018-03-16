@@ -9,7 +9,7 @@ NUMWORMS = 1
 
 ITERATIONSPERSECOND = 60
 
-GENERATIONSTYLE = "North Country"
+GENERATIONSTYLE = "Mystic Peaks"
 
 terrain_types = {
 "GRASS": {"colour": [110, 163, 20], "solid":True},
@@ -30,3 +30,7 @@ terrain_types = {
 "CLOUD": {"colour": [220, 220, 255], "solid": False},
 "WORM": {"colour": [20, 20, 55], "solid": True}
 }
+VAR_AIR = 3
+VAR_SOIL = 6
+VAR_EARTHCORE = 4
+
