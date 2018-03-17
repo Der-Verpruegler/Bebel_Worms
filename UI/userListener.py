@@ -13,7 +13,7 @@ class userListener:
 		elif pressed[self._pygame.K_RIGHT]:
 			self.worms[0].move("right")
 		elif pressed[self._pygame.K_SPACE]:
-			pass
+			self.worms[0].move("up")
 		elif pressed[self._pygame.K_TAB]:
 			pass
 		return True

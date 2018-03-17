@@ -59,6 +59,9 @@ class Worm():
 		sub_map = self.map.solidity[box[0][0]:box[1][0], box[0][1]:box[1][1]]       
 		return sub_map.any()
 
+	def check_if_on_solid(self, box):
+		sub_map = self.map.solidity[(box[0][1] + 1):(box[1][1] + 1), (box[0][1] + 1):(box[1][1] + 1)]       
+		return sub_map.any()
 
 	def move(self, direction):
 		if direction=="left":
@@ -74,3 +77,10 @@ class Worm():
 				hitbox = self.get_hitbox(col=self.corner_col+1, row=self.corner_row)
 				if not self.check_for_box_collision(hitbox):
 					self.corner_col += 1
+					
+		elif direction == "up":
+			hitbox = self.get_hitbox(self.corner_col, self.corner_row)
+			if self.check_if_on_solid(hitbox) and self.corner_row - 20 > 0:
+				hitbox = self.get_hitbox(self.corner_col, self.corner_row - 3)
+				if not self.check_for_box_collision(hitbox):
+					self.corner_row -= 20 
