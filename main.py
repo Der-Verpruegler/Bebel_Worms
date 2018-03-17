@@ -37,16 +37,15 @@ def inputLoop(ui):
 	global running, worms
 	
 	while running:
-		time.sleep(0.005)
+		time.sleep(0.07)
 		running = ui.getNextEvent(worms)
-		#print(worms[0].corner_col, worms[0].corner_row)
 	return
 	
 def gravityLoop():
 	global running, worms
 	
 	while running:
-		time.sleep(0.02)
+		time.sleep(0.01)
 		for worm in worms:
 				worm.move("down")
 	
