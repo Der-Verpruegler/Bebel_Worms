@@ -33,13 +33,22 @@ def outputLoop(gui):
 		gui.update(map.colours, worms)
 	return
 		
-def inputLoop(ui, worms):
-	global running
+def inputLoop(ui):
+	global running, worms
 	
 	while running:
 		time.sleep(0.005)
 		running = ui.getNextEvent(worms)
+		#print(worms[0].corner_col, worms[0].corner_row)
 	return
+	
+def gravityLoop():
+	global running, worms
+	
+	while running:
+		time.sleep(0.02)
+		for worm in worms:
+				worm.move("down")
 	
 def mainLoop():
 	global running, map, worms
@@ -52,10 +61,12 @@ def mainLoop():
 
 	running = True
 	
+	gravityThread = threading.Thread(target=gravityLoop)
 	outputThread = threading.Thread(target=outputLoop, args=(gui,))
 	
+	gravityThread.start()
 	outputThread.start()
-	inputLoop(ui, worms)
+	inputLoop(ui)
 	outputThread.join()
 	
 	pygame.quit()
