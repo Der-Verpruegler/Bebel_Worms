@@ -31,7 +31,6 @@ def outputLoop(gui):
 	while running:
 		time.sleep(0.01)
 		gui.update(map.colours, worms)
-	return
 		
 def inputLoop(ui):
 	global running, worms
@@ -39,7 +38,6 @@ def inputLoop(ui):
 	while running:
 		time.sleep(0.07)
 		running = ui.getNextEvent(worms)
-	return
 	
 def gravityLoop():
 	global running, worms
@@ -47,7 +45,7 @@ def gravityLoop():
 	while running:
 		time.sleep(0.01)
 		for worm in worms:
-				worm.move("down")
+			worm.move("down")
 	
 def mainLoop():
 	global running, map, worms

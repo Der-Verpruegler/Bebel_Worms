@@ -2,14 +2,12 @@
 - numpy arrays als Statespeicher
 - Github oder GitLab?
 
-
 - Map-Größe in px: 1024x768
 - [0,0] [0,1]
 - [1,0] [1,1]
 - Check @ Numpy wie die Dims sind
 - Python 3
 - config-file für Farben etc.
-
 
 Basisfunktionalitäten:
 _klasse Map(Auflösung):
@@ -78,13 +76,37 @@ Meylensteyne:
 	- vorher mergen
 	- refactoring & review
 	- mit speed testen
-
-
+	
 * Map mit Altitude
 * Worm mit Kollisionserkennung und Sprungfunktion
 * Experimentieren mit Gravitation
 
+__________________________________________________________________________________________
 
+Readme nachziehen
+Refactoring:
+	* Magic numbers entfernen, in config verschieben und sinnvollen Namen geben
+	* Ordnerstruktur: gui und ui in Frontend, map und worms in Backend
+	* in Worm-Klasse, Move-Funktion optimieren
+	
+Sprungfunktion:
+	* Keine seitliche Bewegung in der Luft initiieren
+	* Richtungstaste ist bereits gedrückt, wenn Sprungtaste gedrückt wird: Sprung in Richtung
+	* Bewegung in diese Richtung nur so lange, wie die Richtungstaste gedrückt wird
+	* userListener anpassen
+	
+Zeit nehmen von Mapgeneratoren
 
-* Mehrere Würmer auf der Map mit Wechselfunktion
-* Zeitanzeige
+Collision check iterativ, falls man sich mehr als einen Pixel bewegt, der die Anzahl der noch möglichen Pixel zurückgibt
+Check auf Maprand oben und unten
+
+Mehrere Würmer auf der Map mit Wechselfunktion
+	* Mehrere Würmer erzeugen
+	* aktiven Wurm, es darf nur ein Wurm aktiv sein
+	* Tab Wurm wechseln
+	* Teams, mit Wurmfarbe je nach Team
+		* Wechseln nur innerhalb eines Teams
+Zeitanzeige
+	* Zeit mit 0 initiieren
+	* Zeitanzeige in GUI
+	* Thread für Zeitaktualisierung

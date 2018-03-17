@@ -24,18 +24,6 @@ class Worm():
 				# Instance vars describing the pos
 				self.corner_col = guess
 				self.corner_row = 0
-
-		# Respect gravity
-		valid_pos = False
-		while valid_pos == False:
-			# Get hitbox for current pos lowered by 1 px
-			hitbox = self.get_hitbox(col=self.corner_col, row=self.corner_row+1)
-			# If collision, keep old data as final spawn
-			if self.check_for_box_collision(hitbox):
-				valid_pos = True
-			# If no collision, bring worm down by 1 px
-			else:
-				self.corner_row +=1
 		
 		return self.corner_col, self.corner_row
 
