@@ -1,5 +1,6 @@
-import config
 import numpy as np
+import config
+
 
 class Worm():
 	__TEAM_GREEN = True
@@ -12,7 +13,7 @@ class Worm():
 			self.team_colour = config.worm_types["WORM_GREEN"]["colour"]
 			Worm.__TEAM_GREEN = False
 		else:
-			self.team = "black"	
+			self.team = "black"
 			self.team_colour = config.worm_types["WORM_BLACK"]["colour"]
 			Worm.__TEAM_GREEN = True
 		self.spawn()
@@ -21,7 +22,7 @@ class Worm():
 	def spawn(self):
 		""" Find a random valid spawn point on map """
 		valid_spawn = False
-		while valid_spawn == False:
+		while valid_spawn is False:
 			# A random column on map
 			guess = np.random.randint(0, config.RENDERAREAWIDTH-self.width)
 			# Get hitbox coords
@@ -53,7 +54,7 @@ class Worm():
 
 
 	def check_for_box_collision(self, box):
-		""" 
+		"""
 		Checks if hitbox touches solid pixel
 		True if there is a collision, False if not
 		Throws exception message if out of map, should be avoided
@@ -62,9 +63,9 @@ class Worm():
 			raise Exception("Out of Map, box[0][0]:" + str(box[0][0]))
 		if box[1][0] > config.RENDERAREAWIDTH:
 			raise Exception("Out of Map, box[1][0]:" + str(box[1][0]))
-			
-		# efficient boxing        
-		sub_map = self.map.solidity[box[0][0]:box[1][0], box[0][1]:box[1][1]]       
+
+		# efficient boxing
+		sub_map = self.map.solidity[box[0][0]:box[1][0], box[0][1]:box[1][1]]
 		return sub_map.any()
 
 
@@ -84,20 +85,20 @@ class Worm():
 				self.update_map(self.get_hitbox(self.corner_col, self.corner_row), False)
 				collision = self.wrap_hitbox_collision(col=self.corner_col+indicator, row=self.corner_row-j)
 				has_ground_below = self.wrap_hitbox_collision(col=self.corner_col, row=self.corner_row+1)
-				if has_ground_below and not collision:					
+				if has_ground_below and not collision:
 					self.corner_col += indicator
-					self.corner_row -= j					
+					self.corner_row -= j
 					break
-				j +=1
-			# Whatever the endposition is, make it solid	
+				j += 1
+			# Whatever the endposition is, make it solid
 			self.update_map(self.get_hitbox(self.corner_col, self.corner_row), True)
 
 
-		if direction=="left" and not self.corner_col-1 < 0:
+		if direction == "left" and not self.corner_col-1 < 0:
 			horizontal_move(-1)
 
 
-		elif direction=="right" and not self.corner_col+1 > (config.RENDERAREAWIDTH-config.WORM_WIDTH):
+		elif direction == "right" and not self.corner_col+1 > (config.RENDERAREAWIDTH-config.WORM_WIDTH):
 			horizontal_move(1)
 
 
@@ -114,7 +115,7 @@ class Worm():
 						break
 					self.corner_row -= 1
 					self.update_map(self.get_hitbox(self.corner_col, self.corner_row), False)
-					j +=1
+					j += 1
 			# Whatever the endposition is, make it solid
 			self.update_map(self.get_hitbox(self.corner_col, self.corner_row), True)
 
@@ -125,5 +126,5 @@ class Worm():
 			collision = self.wrap_hitbox_collision(self.corner_col, self.corner_row + 1)
 			if not collision:
 				self.corner_row += 1
-			# Whatever the endposition is, make it solid	
+			# Whatever the endposition is, make it solid
 			self.update_map(self.get_hitbox(self.corner_col, self.corner_row), True)

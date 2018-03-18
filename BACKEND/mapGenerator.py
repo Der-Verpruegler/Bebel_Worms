@@ -11,7 +11,7 @@ class MapGenerator:
         if config.GENERATIONSTYLE == "North Country":
             self.style_north_country(colours, solidity)
         if config.GENERATIONSTYLE == "Mystic Peaks":
-            self.style_mystic_peaks(colours, solidity)            
+            self.style_mystic_peaks(colours, solidity)
 
     def generate_field(self, col, row, terrain_type, colours, solidity):
         colours[col, row] = config.terrain_types[terrain_type]["colour"]
@@ -19,22 +19,22 @@ class MapGenerator:
 
 
     def field_filler(self, process, colours, solidity):
-        """ Fills the map with fields, regarding the solidity split 
+        """ Fills the map with fields, regarding the solidity split
             pattern (process) and adds random jitter """
-            
+
         for col in range(config.RENDERAREAWIDTH):
             split = process[col]
-            for row in range(config.RENDERAREAHEIGHT):                
+            for row in range(config.RENDERAREAHEIGHT):
                 if row < split:
-                    choice = np.random.choice(["AIR" + str(i) for i in range(1, config.VAR_AIR)])                    
+                    choice = np.random.choice(["AIR" + str(i) for i in range(1, config.VAR_AIR)])
                 elif (row - np.random.randint(5, 10)) < split:
-                    choice = "GRASS"                    
+                    choice = "GRASS"
                 elif (row - np.random.randint(18, 20)) < split:
-                    choice = "DARKGRASS"                    
+                    choice = "DARKGRASS"
                 elif (config.RENDERAREAHEIGHT - np.random.randint(10, np.random.randint(30, 60))) > row:
                     choice = np.random.choice(["SOIL" + str(i) for i in range(1, config.VAR_SOIL)])
                 else:
-                    choice = np.random.choice(["EARTHCORE" + str(i) for i in range(1, config.VAR_EARTHCORE)])    
+                    choice = np.random.choice(["EARTHCORE" + str(i) for i in range(1, config.VAR_EARTHCORE)])
                 self.generate_field(col, row, choice, colours, solidity)
 
 
@@ -51,18 +51,18 @@ class MapGenerator:
         process = np.random.randint(0, config.RENDERAREAHEIGHT, config.RENDERAREAWIDTH)
         process = self.smoother(process, 2)
         process = self.blocker(process, 12)
-        process = self.smoother(process, 17)    
+        process = self.smoother(process, 17)
         self.field_filler(process, colours, solidity)
-     
-               
+
+
     def style_mystic_peaks(self, colours, solidity):
         """ Creates a mystical map, that has steepness. """
         process = np.random.randint(0, config.RENDERAREAHEIGHT, config.RENDERAREAWIDTH)
         process = self.extremizer(process, 5)
         process = self.smoother(process, 5)
         process = self.blocker(process, 15)
-        process = self.smoother(process, 15)        
-        self.field_filler(process, colours, solidity) 
+        process = self.smoother(process, 15)
+        self.field_filler(process, colours, solidity)
 
 
     def extremizer(self, process, window):
