@@ -1,6 +1,0 @@
-{
-"grass": {"colour": [127, 255, 127], "solid":true},
-"sky": {"colour": [127, 127, 255], "solid": false},
-"air": {"colour": [127, 127, 255], "solid": false},
-"cloud": {"colour": [220, 220, 255], "solid": false}
-}

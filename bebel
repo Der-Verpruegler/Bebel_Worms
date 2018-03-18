@@ -1,4 +1,4 @@
-- pygame
+﻿- pygame
 - numpy arrays als Statespeicher
 - Github oder GitLab?
 
@@ -85,12 +85,12 @@ ________________________________________________________________________________
 
 Readme nachziehen
 Refactoring:
-	* Magic numbers entfernen, in config verschieben und sinnvollen Namen geben
-	* Ordnerstruktur: gui und ui in Frontend, map und worms in Backend
-	* in Worm-Klasse, Move-Funktion optimieren
+	* Magic numbers entfernen, in config verschieben und sinnvollen Namen geben *CHECK*
+	* Ordnerstruktur: gui und ui in Frontend, map und worms in Backend *CHECK*
+	* in Worm-Klasse, Move-Funktion optimieren *CHECK*, *CHECK*
 	
 Sprungfunktion:
-	* Keine seitliche Bewegung in der Luft initiieren
+	* Keine seitliche Bewegung in der Luft initiieren *CHECK*
 	* Richtungstaste ist bereits gedrückt, wenn Sprungtaste gedrückt wird: Sprung in Richtung
 	* Bewegung in diese Richtung nur so lange, wie die Richtungstaste gedrückt wird
 	* userListener anpassen
@@ -101,10 +101,10 @@ Collision check iterativ, falls man sich mehr als einen Pixel bewegt, der die An
 Check auf Maprand oben und unten
 
 Mehrere Würmer auf der Map mit Wechselfunktion
-	* Mehrere Würmer erzeugen
+	* Mehrere Würmer erzeugen *CHECK*
 	* aktiven Wurm, es darf nur ein Wurm aktiv sein
 	* Tab Wurm wechseln
-	* Teams, mit Wurmfarbe je nach Team
+	* Teams, mit Wurmfarbe je nach Team *CHECK*
 		* Wechseln nur innerhalb eines Teams
 Zeitanzeige
 	* Zeit mit 0 initiieren
