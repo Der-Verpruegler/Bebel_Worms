@@ -3,14 +3,15 @@ RENDERAREAHEIGHT = 540
 MAPGRANULARITY = 1 # in px
 PIXELSCALINGFACTOR = 2
 
-WORM_WIDTH = 15
+WORM_WIDTH = 12
 WORM_HEIGHT = 25
 WORM_VERT_GAIN = 4
-NUMWORMS = 1
+WORM_JUMP_HEIGHT = 20
+NUMWORMS = 8
 
 ITERATIONSPERSECOND = 60
 
-GENERATIONSTYLE = "North Country"
+GENERATIONSTYLE = "Proving Grounds"
 
 terrain_types = {
 "GRASS": {"colour": [110, 163, 20], "solid":True},
@@ -28,9 +29,14 @@ terrain_types = {
 "EARTHCORE2": {"colour": [112, 31, 0], "solid": True},
 "EARTHCORE3": {"colour": [115, 21, 0], "solid": True},
 "EARTHCORE4": {"colour": [109, 37, 0], "solid": True},
-"CLOUD": {"colour": [220, 220, 255], "solid": False},
-"WORM": {"colour": [20, 20, 55], "solid": True}
+"CLOUD": {"colour": [220, 220, 255], "solid": False}
 }
+
+worm_types = {
+"WORM_BLACK": {"colour": [20, 20, 55], "solid": True},
+"WORM_GREEN": {"colour": [251, 204, 231], "solid": True}
+}
+
 VAR_AIR = 3
 VAR_SOIL = 6
 VAR_EARTHCORE = 4

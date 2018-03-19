@@ -6,10 +6,10 @@ import pygame
 import numpy as np
 
 import config
-from GUI import mainRenderer
-from UI import userListener
-from MAP import mapGenerator
-from WORM import worm
+from FRONTEND import mainRenderer
+from FRONTEND import userListener
+from BACKEND import mapGenerator
+from BACKEND import worm
 
 running = False
 worms = np.empty(config.NUMWORMS, dtype=worm.Worm)
@@ -36,7 +36,7 @@ def inputLoop(ui):
 	global running, worms
 	
 	while running:
-		time.sleep(0.07)
+		time.sleep(0.03) #0.07 is good
 		running = ui.getNextEvent(worms)
 	
 def gravityLoop():
@@ -44,8 +44,8 @@ def gravityLoop():
 	
 	while running:
 		time.sleep(0.01)
-		for worm in worms:
-			worm.move("down")
+		for worm_set in worms:
+			worm_set.move("down")
 	
 def mainLoop():
 	global running, map, worms

@@ -17,4 +17,4 @@ class mainRenderer:
 		
 	def renderWorms(self, worms):
 		for worm in worms:
-			self._pygame.draw.rect(self._screen, config.terrain_types["WORM"]["colour"], (worm.corner_col, worm.corner_row, worm.width, worm.height))
+			self._pygame.draw.rect(self._screen, worm.team_colour, (worm.corner_col, worm.corner_row, worm.width, worm.height))
