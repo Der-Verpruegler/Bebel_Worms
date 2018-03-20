@@ -1,6 +1,8 @@
 # pylint: disable=maybe-no-member
 import numpy as np
+import time
 import config
+from multiprocessing.dummy import Pool as ThreadPool
 
 
 class MapGenerator:
@@ -21,21 +23,30 @@ class MapGenerator:
     def field_filler(self, process, colours, solidity):
         """ Fills the map with fields, regarding the solidity split
             pattern (process) and adds random jitter """
-
+            
         for col in range(config.RENDERAREAWIDTH):
             split = process[col]
             for row in range(config.RENDERAREAHEIGHT):
                 if row < split:
                     choice = np.random.choice(["AIR" + str(i) for i in range(1, config.VAR_AIR)])
+                    self.generate_field(col, row, choice, colours, solidity)
+                    continue                                
                 elif (row - np.random.randint(5, 10)) < split:
                     choice = "GRASS"
+                    self.generate_field(col, row, choice, colours, solidity)
+                    continue   
                 elif (row - np.random.randint(18, 20)) < split:
                     choice = "DARKGRASS"
+                    self.generate_field(col, row, choice, colours, solidity)
+                    continue
                 elif (config.RENDERAREAHEIGHT - np.random.randint(10, np.random.randint(30, 60))) > row:
                     choice = np.random.choice(["SOIL" + str(i) for i in range(1, config.VAR_SOIL)])
+                    self.generate_field(col, row, choice, colours, solidity)
+                    continue
                 else:
                     choice = np.random.choice(["EARTHCORE" + str(i) for i in range(1, config.VAR_EARTHCORE)])
-                self.generate_field(col, row, choice, colours, solidity)
+                    self.generate_field(col, row, choice, colours, solidity)
+                    continue
 
 
     def style_proving_grounds(self, colours, solidity):
@@ -43,26 +54,44 @@ class MapGenerator:
         half solid half permeable. """
         # Fill the array
         process = np.full((config.RENDERAREAWIDTH), config.RENDERAREAHEIGHT / 2)
+        start = time.clock()
+        print("Start: ", start)
+        last_step = time.clock()
         self.field_filler(process, colours, solidity)
-
+        print("Field-Filler: ", time.clock() - last_step)
 
     def style_north_country(self, colours, solidity):
         """ Creates a simple map, that is hilly. """
         process = np.random.randint(0, config.RENDERAREAHEIGHT, config.RENDERAREAWIDTH)
+        start = time.clock()
+        print("Start: ", start)
         process = self.smoother(process, 2)
+        print("Smoother: ", time.clock()- start)
         process = self.blocker(process, 12)
+        print("Blocker: ", time.clock()- start)
         process = self.smoother(process, 17)
+        print("Smoother: ", time.clock()- start)
+        last_step = time.clock()
         self.field_filler(process, colours, solidity)
+        print("Field-Filler: ", time.clock() - last_step)
 
 
     def style_mystic_peaks(self, colours, solidity):
         """ Creates a mystical map, that has steepness. """
         process = np.random.randint(0, config.RENDERAREAHEIGHT, config.RENDERAREAWIDTH)
+        start = time.clock()
+        print("Start: ", start)        
         process = self.extremizer(process, 5)
+        print("Extremizer: ", time.clock()- start)
         process = self.smoother(process, 5)
+        print("Smoother: ", time.clock()- start)
         process = self.blocker(process, 15)
+        print("Blocker: ", time.clock()- start)
         process = self.smoother(process, 15)
+        print("Smoother: ", time.clock()- start)
+        last_step = time.clock()
         self.field_filler(process, colours, solidity)
+        print("Field-Filler: ", time.clock() - last_step)
 
 
     def extremizer(self, process, window):

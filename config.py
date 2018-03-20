@@ -11,7 +11,7 @@ NUMWORMS = 8
 
 ITERATIONSPERSECOND = 60
 
-GENERATIONSTYLE = "Proving Grounds"
+GENERATIONSTYLE = "Mystic Peaks"
 
 terrain_types = {
 "GRASS": {"colour": [110, 163, 20], "solid":True},
