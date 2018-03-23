@@ -2,7 +2,6 @@
 import numpy as np
 import time
 import config
-from multiprocessing.dummy import Pool as ThreadPool
 
 
 class MapGenerator:
@@ -18,36 +17,30 @@ class MapGenerator:
     def generate_field(self, col, row, terrain_type, colours, solidity):
         colours[col, row] = config.terrain_types[terrain_type]["colour"]
         solidity[col, row] = config.terrain_types[terrain_type]["solid"]
-
+        
+    def generate_mult_field(self, col, split, choice, colours, solidity):
+        """ Generates multiple fields at once, optimization """
+        colours[col, 0:split] = [config.terrain_types[terrain_type]["colour"] for terrain_type in choice] 
+        solidity[col, 0:split] = [config.terrain_types[terrain_type]["solid"] for terrain_type in choice]      
 
     def field_filler(self, process, colours, solidity):
         """ Fills the map with fields, regarding the solidity split
             pattern (process) and adds random jitter """
-            
+
         for col in range(config.RENDERAREAWIDTH):
             split = process[col]
-            for row in range(config.RENDERAREAHEIGHT):
-                if row < split:
-                    choice = np.random.choice(["AIR" + str(i) for i in range(1, config.VAR_AIR)])
-                    self.generate_field(col, row, choice, colours, solidity)
-                    continue                                
-                elif (row - np.random.randint(5, 10)) < split:
+            choice = np.random.choice(["AIR" + str(i) for i in range(1, config.VAR_AIR)], split)
+            self.generate_mult_field(col, split, choice, colours, solidity)
+            for row in range(split, config.RENDERAREAHEIGHT):
+                if (row - np.random.randint(5, 10)) < split:
                     choice = "GRASS"
-                    self.generate_field(col, row, choice, colours, solidity)
-                    continue   
                 elif (row - np.random.randint(18, 20)) < split:
                     choice = "DARKGRASS"
-                    self.generate_field(col, row, choice, colours, solidity)
-                    continue
                 elif (config.RENDERAREAHEIGHT - np.random.randint(10, np.random.randint(30, 60))) > row:
                     choice = np.random.choice(["SOIL" + str(i) for i in range(1, config.VAR_SOIL)])
-                    self.generate_field(col, row, choice, colours, solidity)
-                    continue
                 else:
                     choice = np.random.choice(["EARTHCORE" + str(i) for i in range(1, config.VAR_EARTHCORE)])
-                    self.generate_field(col, row, choice, colours, solidity)
-                    continue
-
+                self.generate_field(col, row, choice, colours, solidity)
 
     def style_proving_grounds(self, colours, solidity):
         """ Creates a simple map, that is horizontal and split
@@ -92,7 +85,6 @@ class MapGenerator:
         last_step = time.clock()
         self.field_filler(process, colours, solidity)
         print("Field-Filler: ", time.clock() - last_step)
-
 
     def extremizer(self, process, window):
         """ Extremizes by either min/max-ing in window"""
