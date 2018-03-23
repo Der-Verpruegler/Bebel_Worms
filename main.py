@@ -4,6 +4,7 @@ import threading
 import time
 import pygame
 import numpy as np
+import random
 
 import config
 from FRONTEND import mainRenderer
@@ -14,6 +15,8 @@ from BACKEND import worm
 running = False
 worms = np.empty(config.NUMWORMS, dtype=worm.Worm)
 map = []
+activeWorm = random.randrange(config.NUMWORMS)
+clock = time.clock()
 
 def main():
 	pygame.init()
@@ -26,18 +29,18 @@ def generateWorms():
 		worms[i] = worm.Worm(map)
 	
 def outputLoop(gui):
-	global running, map, worms
+	global running, map, worms, clock
 
 	while running:
 		time.sleep(0.01)
-		gui.update(map.colours, worms)
+		gui.update(time.clock() - clock, map.colours, worms, activeWorm)
 		
 def inputLoop(ui):
-	global running, worms
+	global running, worms, activeWorm
 	
 	while running:
 		time.sleep(0.03) #0.07 is good
-		running = ui.getNextEvent(worms)
+		running, activeWorm = ui.getNextEvent(worms, activeWorm)
 	
 def gravityLoop():
 	global running, worms
@@ -53,8 +56,8 @@ def mainLoop():
 	map = mapGenerator.MapBackend()
 	generateWorms()
 	
-	gui = mainRenderer.mainRenderer(pygame)
-	ui = userListener.userListener(pygame, worms)
+	gui = mainRenderer.mainRenderer()
+	ui = userListener.userListener(worms)
 
 	running = True
 	
