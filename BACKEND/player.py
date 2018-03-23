@@ -1,6 +1,11 @@
+""""
+MERELY A SKETCH OF CLAS SO FAR!
+How many max players should be allowed?
+Item : generic for weapon or inventory
+"""
 from collections import defaultdict
 import math
-#import config
+import config
 
 
 class Player():
@@ -16,34 +21,30 @@ class Player():
 
 		self.total_health = 0
 
-		self.weapons = defaultdict()
-		# e.g. self.weapons["Prod"] = math.inf
-		# e.g. self.weapons["Airstrike"] = 1
+		self.items = defaultdict()
+		# e.g. self.items["Prod"] = math.inf
+		# e.g. self.items["Airstrike"] = 1
+		# e.g. self.items["Speedup"] = 1
 
-		self.inventory = defaultdict()
-		# eg. self.inventory["Speedup"] = 1
-
-	def gain_item(self, boost_item, name, quantity):
+	def item_change(self, name, quantity, change):
 		""" 
-		Item := Weapon or Boost 
-		Generic gain-item-function
+		Generic gain and use-item-function
 		"""
-		# e.g. self.boost_item[name] += quantity
+		self.items[name] += change
 		pass
 
 	def list_items(self):
 		""" 
-		Item := Weapon or Boost 
-		Generic list-item-function
+		Generic list available items function
 		"""
-		pass
+		return self.items
 
 	def switch_item(self, selected):
 		""" 
-		Item := Weapon or Boost 
 		Switch selected item
 		"""
-		pass
+		self.activated_item = selected
+		return
 
 	def modify_total_health(self):
 		"""
@@ -51,6 +52,8 @@ class Player():
 		"""
 		# e.g. self.total_health += worm[0].health
 		if self.total_health<=0:
-			print("GAME OVER!")		
-
+			print("GAME OVER!")
+		if self.player_name=='Frederik':
+			self.total_health=0
+		return
 
