@@ -28,19 +28,21 @@ class MapGenerator:
 		Fills the map with fields, regarding the solidity split
 		pattern (process) and adds random jitter
 		"""
+		# Abbreviate vars for shorter lines
 		MAP_HEIGHT = config.RENDERAREAHEIGHT
 		SH_CORE = int(config.SHARE_EARTHCODE * MAP_HEIGHT)
 
 		for col in range(config.RENDERAREAWIDTH):
-			# Save time I
+			# Save time I (Air is filled up until split)
 			split = process[col]
 			choice = np.random.choice(["AIR" + str(i) for i in range(1, config.VAR_AIR)], split)
 			self.generate_mult_field(col, 0, split, choice, colours, solidity)
 
-			# Save time II
+			# Save time II (Earth is filled up from below)
 			choice = np.random.choice(["EARTHCORE" + str(i) for i in range(1, config.VAR_EARTHCORE)], 10)
 			self.generate_mult_field(col, MAP_HEIGHT - SH_CORE, MAP_HEIGHT, choice, colours, solidity)
 
+			# Random filling, hard to optimize
 			for row in range(split, MAP_HEIGHT - SH_CORE):
 				if row < split + np.random.randint(5, 10):
 					choice = "GRASS"
@@ -60,9 +62,11 @@ class MapGenerator:
 		""" 
 		Creates a simple map, that is horizontal and split
 		half solid half permeable. 
+		Out: Process, int-array indicating per column 
+		in which row the solid/non-solid split is.
 		"""
 		# Fill the array
-		process = np.full((config.RENDERAREAWIDTH), config.RENDERAREAHEIGHT / 2)
+		process = np.full((config.RENDERAREAWIDTH), np.int(config.RENDERAREAHEIGHT / 2))
 		start = time.clock()
 		print("Start: ", start)
 		last_step = time.clock()
@@ -70,7 +74,11 @@ class MapGenerator:
 		print("Field-Filler: ", time.clock() - last_step)
 
 	def style_north_country(self, colours, solidity):
-		""" Creates a simple map, that is hilly. """
+		""" 
+		Creates a simple map, that is hilly. 
+		Out: Process, int-array indicating per column 
+		in which row the solid/non-solid split is.
+		"""
 		process = np.random.randint(0, config.RENDERAREAHEIGHT, config.RENDERAREAWIDTH)
 		start = time.clock()
 		print("Start: ", start)
@@ -86,7 +94,11 @@ class MapGenerator:
 
 
 	def style_mystic_peaks(self, colours, solidity):
-		""" Creates a mystical map, that has steepness. """
+		""" 
+		Creates a mystical map, that has considerable steepness.
+		Out: Process, int-array indicating per column 
+		in which row the solid/non-solid split is.
+		"""
 		process = np.random.randint(0, config.RENDERAREAHEIGHT, config.RENDERAREAWIDTH)
 		start = time.clock()
 		print("Start: ", start)

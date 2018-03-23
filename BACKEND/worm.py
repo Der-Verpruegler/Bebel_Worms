@@ -1,3 +1,4 @@
+import time
 import numpy as np
 import config
 
@@ -74,20 +75,42 @@ class Worm():
 		return self.check_for_box_collision(hitbox)
 
 
-	def move(self, direction):
+	def move(self, direction, speed=1):
 		""" All movements of worm """
 
-		def horizontal_move(indicator):
+		def horizontal_move(speed):
 			""" Generic function for horizontal moves """
+
+			# For speed ups: #TODO: MAKE THIS WORK!
+			# if np.abs(speed)>1: 
+			# 	print("yoyo")
+			# 	# Make current hitbox "invisible", important for collision detection
+			# 	self.update_map(self.get_hitbox(self.corner_col, self.corner_row), False)
+			# 	has_ground_below = self.wrap_hitbox_collision(col=self.corner_col, row=self.corner_row+1)
+			# 	move_step = 0
+			# 	while move_step<=abs(speed):
+			# 		print("heyhey")
+			# 		collision = self.wrap_hitbox_collision(col=self.corner_col+move_step, row=self.corner_row)
+			# 		if collision and has_ground_below:
+			# 			self.corner_col += move_step
+			# 			print("here")
+			# 			break
+			# 		else:
+			# 			move_step += 1	
+			# 	self.update_map(self.get_hitbox(self.corner_col, self.corner_row), True)
+			# Standard speed:
+			#else:
 			j = 0
 			while j < config.WORM_VERT_GAIN:
 				# Make current hitbox "invisible", important for collision detection
 				self.update_map(self.get_hitbox(self.corner_col, self.corner_row), False)
-				collision = self.wrap_hitbox_collision(col=self.corner_col+indicator, row=self.corner_row-j)
 				has_ground_below = self.wrap_hitbox_collision(col=self.corner_col, row=self.corner_row+1)
+				collision = self.wrap_hitbox_collision(col=self.corner_col+speed, row=self.corner_row-j)					
 				if has_ground_below and not collision:
-					self.corner_col += indicator
+					self.corner_col += speed
 					self.corner_row -= j
+					# If uphill: slow worm!
+					time.sleep(j/10)
 					break
 				j += 1
 			# Whatever the endposition is, make it solid
@@ -95,11 +118,11 @@ class Worm():
 
 
 		if direction == "left" and not self.corner_col-1 < 0:
-			horizontal_move(-1)
+			horizontal_move(-1) # TODO: get rid of default value!
 
 
 		elif direction == "right" and not self.corner_col+1 > (config.RENDERAREAWIDTH-config.WORM_WIDTH):
-			horizontal_move(1)
+			horizontal_move(1) # TODO: get rid of default value!
 
 
 		elif direction == "up":
