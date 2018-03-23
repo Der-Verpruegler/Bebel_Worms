@@ -31,6 +31,7 @@ terrain_types = {
 "EARTHCORE4": {"colour": [109, 37, 0], "solid": True},
 "CLOUD": {"colour": [220, 220, 255], "solid": False}
 }
+SHARE_EARTHCODE = 0.02
 
 worm_types = {
 "WORM_BLACK": {"colour": [20, 20, 55], "solid": True},
