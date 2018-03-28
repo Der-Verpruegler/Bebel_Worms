@@ -1,4 +1,4 @@
-# pylint: disable=maybe-no-member
+# pylint: disable=W0312, E1101
 import time
 import numpy as np
 import config
@@ -24,7 +24,7 @@ class MapGenerator:
 		solidity[col, start:end] = [config.terrain_types[terrain_type]["solid"] for terrain_type in choice]
 
 	def field_filler(self, process, colours, solidity):
-		""" 
+		"""
 		Fills the map with fields, regarding the solidity split
 		pattern (process) and adds random jitter
 		"""
@@ -59,7 +59,7 @@ class MapGenerator:
 		pass
 
 	def style_proving_grounds(self, colours, solidity):
-		""" 
+		"""
 		Creates a simple map, that is horizontal and split
 		half solid half permeable. 
 		Out: Process, int-array indicating per column 
@@ -74,7 +74,7 @@ class MapGenerator:
 		print("Field-Filler: ", time.clock() - last_step)
 
 	def style_north_country(self, colours, solidity):
-		""" 
+		"""
 		Creates a simple map, that is hilly. 
 		Out: Process, int-array indicating per column 
 		in which row the solid/non-solid split is.
@@ -94,9 +94,9 @@ class MapGenerator:
 
 
 	def style_mystic_peaks(self, colours, solidity):
-		""" 
+		"""
 		Creates a mystical map, that has considerable steepness.
-		Out: Process, int-array indicating per column 
+		Out: Process, int-array indicating per column
 		in which row the solid/non-solid split is.
 		"""
 		process = np.random.randint(0, config.RENDERAREAHEIGHT, config.RENDERAREAWIDTH)
@@ -166,6 +166,10 @@ class MapBackend:
 		""" Extracts solidity of a pixel """
 		return self.solidity[col, row]
 
+	def box_get_solidity(self, box):
+		""" Returns the solidity in a geometric rectangle, defined by box """
+		return self.solidity[box[0][0]:box[1][0], box[0][1]:box[1][1]]
+
 	def px_get_colour(self, col, row):
 		""" Extracts colour of a pixel """
 		return self.colours[col, row]
@@ -173,6 +177,10 @@ class MapBackend:
 	def px_set_solidity(self, col, row, boolean):
 		""" Should only be used in test cases? """
 		self.solidity[col, row] = boolean
+
+	def box_set_solidity(self, box, boolean):
+		""" Changes the solidity in a geometric rectangle, defined by box """
+		self.solidity[box[0][0]:box[1][0], box[0][1]:box[1][1]] = boolean
 
 	def px_set_colour(self, col, row, colour):
 		""" Should only be used in test cases? """
