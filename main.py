@@ -9,55 +9,59 @@ import random
 import config
 from FRONTEND import mainRenderer
 from FRONTEND import userListener
+from BACKEND import player
 from BACKEND import mapGenerator
 from BACKEND import worm
 
 running = False
-worms = np.empty(config.NUMWORMS, dtype=worm.Worm)
+players = np.empty(config.NUMPLAYERS, dtype=player.Player)
 map = []
-activeWorm = random.randrange(config.NUMWORMS)
 clock = time.clock()
+activePlayer = 0
 
 def main():
 	pygame.init()
 	mainLoop()
 	
-def generateWorms():
-	global map, worms
+def generatePlayers():
+	global map, players
 
-	for i in range(config.NUMWORMS):
-		worms[i] = worm.Worm(map)
+	for i in range(config.NUMPLAYERS):
+		players[i] = player.Player(map, i)
 	
 def outputLoop(gui):
-	global running, map, worms, clock
+	global running, map, players, clock, activePlayer
 
 	while running:
 		time.sleep(0.01)
-		gui.update(time.clock() - clock, map.colours, worms, activeWorm)
+		gui.update(time.clock() - clock, map.colours, players, activePlayer)
 		
 def inputLoop(ui):
-	global running, worms, activeWorm
+	global running, players
 	
 	while running:
 		time.sleep(0.03) #0.07 is good
-		running, activeWorm = ui.getNextEvent(worms, activeWorm)
+		running  = ui.getNextEvent(players, activePlayer)
 	
 def gravityLoop():
-	global running, worms
+	global running, players
 	
 	while running:
 		time.sleep(0.01)
-		for worm_set in worms:
-			worm_set.move("down")
+		for player in players:
+			for worm in player.worms:
+				worm.move("down")
 	
 def mainLoop():
-	global running, map, worms
+	global map, running, activePlayer
 	
 	map = mapGenerator.MapBackend()
-	generateWorms()
+	generatePlayers()
+	
+	activePlayer = random.randrange(config.NUMPLAYERS)
 	
 	gui = mainRenderer.mainRenderer()
-	ui = userListener.userListener(worms)
+	ui = userListener.userListener()
 
 	running = True
 	

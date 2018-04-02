@@ -8,9 +8,9 @@ class mainRenderer:
 		self._screen = pygame.display.set_mode([config.RENDERAREAWIDTH, config.RENDERAREAHEIGHT])
 		self.font = pygame.font.SysFont("monospace", 36, True)
 		
-	def update(self, currentTime, map, worms, activeWorm):
+	def update(self, currentTime, map, players, activePlayer):
 		self.renderMap(map)
-		self.renderWorms(worms, activeWorm)
+		self.renderWorms(players, activePlayer)
 		self.renderTime(currentTime)
 		pygame.display.flip()
 		
@@ -25,9 +25,8 @@ class mainRenderer:
 	def renderMap(self, map):
 		pygame.surfarray.blit_array(self._screen, map)
 		
-	def renderWorms(self, worms, activeWorm):
-		for i in range(len(worms)):
-			colour = worms[i].team_colour
-			if i == activeWorm:
-				colour = (255, 255, 255)
-			pygame.draw.rect(self._screen, colour, (worms[i].corner_col, worms[i].corner_row, worms[i].width, worms[i].height))
+	def renderWorms(self, players, activePlayer):
+		for i in range(len(players)):
+			for j in range(len(players[i].worms)):
+				colour = (255, 255, 255) if (i == activePlayer and j == players[i].activeWormIdx) else players[i].worms[j]._colour
+				pygame.draw.rect(self._screen, colour, (players[i].worms[j].corner_col, players[i].worms[j].corner_row, players[i].worms[j].width, players[i].worms[j].height))

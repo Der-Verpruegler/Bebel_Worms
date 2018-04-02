@@ -1,0 +1,41 @@
+    def field_filler(self, process, colours, solidity):
+        """ Fills the map with fields, regarding the solidity split
+            pattern (process) and adds random jitter """
+        def fill_it(slice):
+            # End of loop defined as min, due last element out of range
+            for col in range(slice[0], min(config.RENDERAREAWIDTH,slice[1]+1)):
+                split = process[col]
+                for row in range(config.RENDERAREAHEIGHT):
+                    if row < split:
+                        choice = np.random.choice(["AIR" + str(i) for i in range(1, config.VAR_AIR)])
+                        self.generate_field(col, row, choice, colours, solidity)
+                        continue
+                    elif (row - np.random.randint(5, 10)) < split:
+                        choice = "GRASS"
+                        self.generate_field(col, row, choice, colours, solidity)
+                        continue
+                    elif (row - np.random.randint(18, 20)) < split:
+                        choice = "DARKGRASS"
+                        self.generate_field(col, row, choice, colours, solidity)
+                        continue
+                    elif (config.RENDERAREAHEIGHT - np.random.randint(10, np.random.randint(30, 60))) > row:
+                        choice = np.random.choice(["SOIL" + str(i) for i in range(1, config.VAR_SOIL)])
+                        self.generate_field(col, row, choice, colours, solidity)
+                        continue                        
+                    else:
+                        choice = np.random.choice(["EARTHCORE" + str(i) for i in range(1, config.VAR_EARTHCORE)])
+                        self.generate_field(col, row, choice, colours, solidity)
+                        continue                        
+                   # self.generate_field(col, row, choice, colours, solidity)
+        
+        # Multicore
+        cores = 1
+        slice_size = int(config.RENDERAREAWIDTH/cores)
+        slices = []
+        for i in range(cores):
+            slices.append([i*slice_size+1, i*slice_size+slice_size])
+        print(slices)
+        
+        pool = ThreadPool(cores)
+        
+        pool.map(fill_it, slices)

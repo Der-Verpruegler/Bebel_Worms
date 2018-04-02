@@ -3,29 +3,29 @@ import config
 import pygame
 
 class userListener:
-	def __init__(self, worms):
-		self.worms = worms
+	def __init__(self):
 		pressed = pygame.key.get_pressed()
 		self.tabStillPressed = pressed[pygame.K_TAB]
 	
-	def getNextEvent(self, worms, activeWorm):
+	def getNextEvent(self, players, activePlayer):
 		event = pygame.event.poll()
 		if event.type == pygame.QUIT:
-			return (False, -1)
+			return False
 		pressed = pygame.key.get_pressed()
 		if not pressed[pygame.K_TAB]:
 			self.tabStillPressed = False
 		if pressed[pygame.K_SPACE]:
 			if pressed[pygame.K_LEFT]:
 				pass # Jump left
-			if pressed[pygame.K_RIGHT]:
+			elif pressed[pygame.K_RIGHT]:
 				pass # Jump right
-			self.worms[activeWorm].move("up")
+			else:
+				players[activePlayer].getActiveWorm().move("up")
 		elif pressed[pygame.K_LEFT]:
-			self.worms[activeWorm].move("left")
+			players[activePlayer].getActiveWorm().move("left")
 		elif pressed[pygame.K_RIGHT]:
-			self.worms[activeWorm].move("right")
+			players[activePlayer].getActiveWorm().move("right")
 		elif pressed[pygame.K_TAB] and not self.tabStillPressed:
-			activeWorm = (activeWorm + 1) % config.NUMWORMS
+			players[activePlayer].switch_worm()
 			self.tabStillPressed = True
-		return (True, activeWorm)
+		return True

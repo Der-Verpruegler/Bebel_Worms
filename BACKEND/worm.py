@@ -1,21 +1,14 @@
+# pylint: disable=W0312, E1101
 import numpy as np
 import config
 
 
 class Worm():
-	__TEAM_GREEN = True
-	def __init__(self, map):
+	def __init__(self, colour, map):
 		self.width = config.WORM_WIDTH
 		self.height = config.WORM_HEIGHT
 		self.map = map
-		if Worm.__TEAM_GREEN:
-			self.team = "green"
-			self.team_colour = config.worm_types["WORM_GREEN"]["colour"]
-			Worm.__TEAM_GREEN = False
-		else:
-			self.team = "black"
-			self.team_colour = config.worm_types["WORM_BLACK"]["colour"]
-			Worm.__TEAM_GREEN = True
+		self._colour = colour;
 		self.spawn()
 
 
@@ -26,7 +19,7 @@ class Worm():
 			# A random column on map
 			guess = np.random.randint(0, config.RENDERAREAWIDTH-self.width)
 			# Get hitbox coords
-			collision = self.wrap_hitbox_collision(col=guess, row=0)
+			collision = self.eval_hitbox_collision(col=guess, row=0)
 			# Check if there is collision with map in shitbox
 			# If not => valid spawn, otherwise try different rand
 			if not collision:
@@ -34,13 +27,8 @@ class Worm():
 				# Instance vars describing the pos
 				self.corner_col = guess
 				self.corner_row = 0
-				# Dirty map hacking? Alternatives to be discussed!
-				self.update_map(self.get_hitbox(self.corner_col, self.corner_row), True)
+				self.wrap_set_map_solidity(self.corner_col, self.corner_row, True)
 		return self.corner_col, self.corner_row
-
-
-	def update_map(self, box, how):
-		self.map.solidity[box[0][0]:box[1][0], box[0][1]:box[1][1]] = how
 
 
 	def get_hitbox(self, col, row):
@@ -63,68 +51,76 @@ class Worm():
 			raise Exception("Out of Map, box[0][0]:" + str(box[0][0]))
 		if box[1][0] > config.RENDERAREAWIDTH:
 			raise Exception("Out of Map, box[1][0]:" + str(box[1][0]))
-
-		# efficient boxing
-		sub_map = self.map.solidity[box[0][0]:box[1][0], box[0][1]:box[1][1]]
+		sub_map = self.map.box_get_solidity(box)
 		return sub_map.any()
 
 
-	def wrap_hitbox_collision(self, col, row):
-		hitbox = self.get_hitbox(col, row)
-		return self.check_for_box_collision(hitbox)
+	def eval_hitbox_collision(self, col, row):
+		""" A wrapper to save lines of code """
+		box = self.get_hitbox(col, row)
+		return self.check_for_box_collision(box)
 
 
-	def move(self, direction):
+	def wrap_set_map_solidity(self, col, row, boolean):
+		""" A wrapper to save lines of code """
+		box = self.get_hitbox(col, row)
+		self.map.box_set_solidity(box, boolean)
+
+
+	def move(self, direction, speed=1):
 		""" All movements of worm """
 
-		def horizontal_move(indicator):
+		def horizontal_move(speed):
 			""" Generic function for horizontal moves """
-			j = 0
-			while j < config.WORM_VERT_GAIN:
+			# TODO: Switch, if speed>1
+			current_vert_gain = 0
+			while current_vert_gain < config.WORM_VERT_GAIN:
 				# Make current hitbox "invisible", important for collision detection
-				self.update_map(self.get_hitbox(self.corner_col, self.corner_row), False)
-				collision = self.wrap_hitbox_collision(col=self.corner_col+indicator, row=self.corner_row-j)
-				has_ground_below = self.wrap_hitbox_collision(col=self.corner_col, row=self.corner_row+1)
+				self.wrap_set_map_solidity(self.corner_col, self.corner_row, False)
+				has_ground_below = self.eval_hitbox_collision(self.corner_col, self.corner_row+1)
+				collision = self.eval_hitbox_collision(self.corner_col+speed, self.corner_row-current_vert_gain)
+
 				if has_ground_below and not collision:
-					self.corner_col += indicator
-					self.corner_row -= j
+					self.corner_col += speed
+					self.corner_row -= current_vert_gain
+					# time.sleep(j/10) # If uphill: slow worm! To be discussed!
 					break
-				j += 1
+				current_vert_gain += 1
 			# Whatever the endposition is, make it solid
-			self.update_map(self.get_hitbox(self.corner_col, self.corner_row), True)
+			self.wrap_set_map_solidity(self.corner_col, self.corner_row, True)
 
 
 		if direction == "left" and not self.corner_col-1 < 0:
-			horizontal_move(-1)
+			horizontal_move(-speed) # TODO: get rid of default value!
 
 
 		elif direction == "right" and not self.corner_col+1 > (config.RENDERAREAWIDTH-config.WORM_WIDTH):
-			horizontal_move(1)
+			horizontal_move(speed) # TODO: get rid of default value!
 
 
 		elif direction == "up":
 			# Make current hitbox "invisible", important for collision detection
-			self.update_map(self.get_hitbox(self.corner_col, self.corner_row), False)
-			has_ground_below = self.wrap_hitbox_collision(self.corner_col, self.corner_row + 1)
+			self.wrap_set_map_solidity(self.corner_col, self.corner_row, False)
+			has_ground_below = self.eval_hitbox_collision(self.corner_col, self.corner_row + 1)
 			if has_ground_below:
-				j = 0
-				while j < config.WORM_JUMP_HEIGHT:
-					k = max(1, j)
-					collision = self.wrap_hitbox_collision(col=self.corner_col, row=self.corner_row-k)
+				current_vert_gain = 0
+				while current_vert_gain < config.WORM_JUMP_HEIGHT:
+					k = max(1, current_vert_gain)
+					collision = self.eval_hitbox_collision(self.corner_col, self.corner_row-k)
 					if collision:
 						break
 					self.corner_row -= 1
-					self.update_map(self.get_hitbox(self.corner_col, self.corner_row), False)
-					j += 1
+					self.wrap_set_map_solidity(self.corner_col, self.corner_row, False)
+					current_vert_gain += 1
 			# Whatever the endposition is, make it solid
-			self.update_map(self.get_hitbox(self.corner_col, self.corner_row), True)
+			self.wrap_set_map_solidity(self.corner_col, self.corner_row, True)
 
 
 		elif direction == "down":
 			# Make current hitbox "invisible", important for collision detection
-			self.update_map(self.get_hitbox(self.corner_col, self.corner_row), False)
-			collision = self.wrap_hitbox_collision(self.corner_col, self.corner_row + 1)
+			self.wrap_set_map_solidity(self.corner_col, self.corner_row, False)
+			collision = self.eval_hitbox_collision(self.corner_col, self.corner_row + 1)
 			if not collision:
 				self.corner_row += 1
 			# Whatever the endposition is, make it solid
-			self.update_map(self.get_hitbox(self.corner_col, self.corner_row), True)
+			self.wrap_set_map_solidity(self.corner_col, self.corner_row, True)
