@@ -6,18 +6,17 @@ Item : generic for weapon or inventory
 from collections import defaultdict
 import math
 import config
+import numpy as np
 
+from BACKEND import worm
 
 class Player():
-	__TEAM_GREEN = True
 
-	def __init__(self, map):
-		if Player.__TEAM_GREEN:
-			self.team = "green"
-			Player.__TEAM_GREEN = False
-		else:
-			Player.team = "black"
-			Player.__TEAM_GREEN = True
+	def __init__(self, map, id):
+		self._id = id
+		self.worms = np.empty(config.NUMWORMSPERPLAYER, dtype=worm.Worm)
+		for i in range(config.NUMWORMSPERPLAYER):
+			self.worms[i] = worm.Worm(config.player_colours[id], map)
 
 		self.total_health = 0
 

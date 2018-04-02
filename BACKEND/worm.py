@@ -4,19 +4,11 @@ import config
 
 
 class Worm():
-	__TEAM_GREEN = True
-	def __init__(self, map):
+	def __init__(self, colour, map):
 		self.width = config.WORM_WIDTH
 		self.height = config.WORM_HEIGHT
 		self.map = map
-		if Worm.__TEAM_GREEN:
-			self.team = "green"
-			self.team_colour = config.worm_types["WORM_GREEN"]["colour"]
-			Worm.__TEAM_GREEN = False
-		else:
-			self.team = "black"
-			self.team_colour = config.worm_types["WORM_BLACK"]["colour"]
-			Worm.__TEAM_GREEN = True
+		self._colour = colour;
 		self.spawn()
 
 

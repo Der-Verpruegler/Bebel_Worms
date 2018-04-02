@@ -15,13 +15,13 @@ class MapGenerator:
 			self.style_mystic_peaks(colours, solidity)
 
 	def generate_field(self, col, row, terrain_type, colours, solidity):
-		colours[col, row] = config.terrain_types[terrain_type]["colour"]
-		solidity[col, row] = config.terrain_types[terrain_type]["solid"]
+		colours[col, row] = terrain_type["colour"]
+		solidity[col, row] = terrain_type["solid"]
 
 	def generate_mult_field(self, col, start, end, choice, colours, solidity):
 		""" Generates multiple fields at once, faster than generate_field()"""
-		colours[col, start:end] = [config.terrain_types[terrain_type]["colour"] for terrain_type in choice]
-		solidity[col, start:end] = [config.terrain_types[terrain_type]["solid"] for terrain_type in choice]
+		colours[col, start:end] = [terrain_type["colour"] for terrain_type in choice]
+		solidity[col, start:end] = [terrain_type["solid"] for terrain_type in choice]
 
 	def field_filler(self, process, colours, solidity):
 		"""
@@ -30,29 +30,29 @@ class MapGenerator:
 		"""
 		# Abbreviate vars for shorter lines
 		MAP_HEIGHT = config.RENDERAREAHEIGHT
-		SH_CORE = int(config.SHARE_EARTHCODE * MAP_HEIGHT)
+		SH_CORE = int(config.SHARE_EARTHCORE * MAP_HEIGHT)
 
 		for col in range(config.RENDERAREAWIDTH):
 			# Save time I (Air is filled up until split)
 			split = process[col]
-			choice = np.random.choice(["AIR" + str(i) for i in range(1, config.VAR_AIR)], split)
-			self.generate_mult_field(col, 0, split, choice, colours, solidity)
+			terrain_type = np.random.choice(config.terrain_types["AIR"], split)
+			self.generate_mult_field(col, 0, split, terrain_type, colours, solidity)
 
 			# Save time II (Earth is filled up from below)
-			choice = np.random.choice(["EARTHCORE" + str(i) for i in range(1, config.VAR_EARTHCORE)], 10)
-			self.generate_mult_field(col, MAP_HEIGHT - SH_CORE, MAP_HEIGHT, choice, colours, solidity)
+			terrain_type = np.random.choice(config.terrain_types["EARTHCORE"], 10)
+			self.generate_mult_field(col, MAP_HEIGHT - SH_CORE, MAP_HEIGHT, terrain_type, colours, solidity)
 
 			# Random filling, hard to optimize
 			for row in range(split, MAP_HEIGHT - SH_CORE):
 				if row < split + np.random.randint(5, 10):
-					choice = "GRASS"
+					terrain_type = config.terrain_types["GRASS"]
 				elif row < split + np.random.randint(18, 20):
-					choice = "DARKGRASS"
+					terrain_type = config.terrain_types["DARKGRASS"]
 				elif row < (MAP_HEIGHT - np.random.randint(SH_CORE, np.random.randint(30, 60))):
-					choice = np.random.choice(["SOIL" + str(i) for i in range(1, config.VAR_SOIL)])
+					terrain_type = np.random.choice(config.terrain_types["SOIL"])
 				else:
-					choice = np.random.choice(["EARTHCORE" + str(i) for i in range(1, config.VAR_EARTHCORE)])
-				self.generate_field(col, row, choice, colours, solidity)
+					terrain_type = np.random.choice(config.terrain_types["EARTHCORE"])
+				self.generate_field(col, row, terrain_type, colours, solidity)
 
 	def create_caves(self, where):
 		""" Template function to add caves into map (subsequent) """

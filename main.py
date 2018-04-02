@@ -8,53 +8,55 @@ import numpy as np
 import config
 from FRONTEND import mainRenderer
 from FRONTEND import userListener
+from BACKEND import player
 from BACKEND import mapGenerator
 from BACKEND import worm
 
 running = False
-worms = np.empty(config.NUMWORMS, dtype=worm.Worm)
+players = np.empty(config.NUMPLAYERS, dtype=player.Player)
 map = []
 
 def main():
 	pygame.init()
 	mainLoop()
 	
-def generateWorms():
-	global map, worms
+def generatePlayers():
+	global map, players
 
-	for i in range(config.NUMWORMS):
-		worms[i] = worm.Worm(map)
+	for i in range(config.NUMPLAYERS):
+		players[i] = player.Player(map, i)
 	
 def outputLoop(gui):
-	global running, map, worms
+	global running, map, players
 
 	while running:
 		time.sleep(0.01)
-		gui.update(map.colours, worms)
+		gui.update(map.colours, players)
 		
 def inputLoop(ui):
-	global running, worms
+	global running, players
 	
 	while running:
 		time.sleep(0.03) #0.07 is good
-		running = ui.getNextEvent(worms)
+		running = ui.getNextEvent(players)
 	
 def gravityLoop():
-	global running, worms
+	global running, players
 	
 	while running:
 		time.sleep(0.01)
-		for worm_set in worms:
-			worm_set.move("down")
+		for player in players:
+			for worm in player.worms:
+				worm.move("down")
 	
 def mainLoop():
-	global running, map, worms
+	global map, running
 	
 	map = mapGenerator.MapBackend()
-	generateWorms()
+	generatePlayers()
 	
-	gui = mainRenderer.mainRenderer(pygame)
-	ui = userListener.userListener(pygame, worms)
+	gui = mainRenderer.mainRenderer()
+	ui = userListener.userListener()
 
 	running = True
 	
