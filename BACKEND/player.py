@@ -47,10 +47,10 @@ class Player():
 		return
 
 	def getActiveWorm(self):
-		return self.worms[activeWormIdx]
+		return self.worms[self.activeWormIdx]
 		
 	def switch_worm(self):
-		self.activeWormIdx += (self.activeWormIdx + 1) % config.NUMWORMSPERPLAYER
+		self.activeWormIdx = (self.activeWormIdx + 1) % config.NUMWORMSPERPLAYER
 		
 	def modify_total_health(self):
 		"""
