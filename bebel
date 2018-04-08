@@ -1,14 +1,3 @@
-﻿- pygame
-- numpy arrays als Statespeicher
-- Github oder GitLab?
-
-- Map-Größe in px: 1024x768
-- [0,0] [0,1]
-- [1,0] [1,1]
-- Check @ Numpy wie die Dims sind
-- Python 3
-- config-file für Farben etc.
-
 Basisfunktionalitäten:
 _klasse Map(Auflösung):
 	*map_generator() -> nparray & Field[]
@@ -19,23 +8,7 @@ _klasse main:
 	worms = Worm()
 	gui = GUI(map, worms)
 	mainLoop() Fragt periodisch User-Input ab und aktualisiert die GUI
-	
-_klasse Size:
-	int __x
-	int __y
-
-_klasse Coordinates:
-	int __x
-	int __y
-
-_klasse Terrain:
-	dict terrain {key = tuple colour: value = bool solid}
 		
-_klasse Field:
-	Size __size ""how big is one pixel""
-	Coordinates __coordinates 
-	Terrain terrain
-
 _klasse Worm: ""Erzeugt Würmerliste""
 	Coordinates coordinates "" links oben ""
 	int health
@@ -64,49 +37,31 @@ _klasse GUI(colourMap, Worm):
 _klasse UI(): Prozessiert User-Input
 	getEvents()
 
-Meylensteyne:
-* Map Generator (eben) und anzeigen
-	- Config-File für Farbendefinition
-	- map_generate() 
-	- map in ui erzeugen
-* Wurm erzeugen und anzeigen und horizontal bewegen aber nicht außerhalb der Welt
-	- worm_generate()
-	- worm in ui ezeugen
-* Implementieren und Experimentieren mit Worm.Speed
-	- vorher mergen
-	- refactoring & review
-	- mit speed testen
-	
-* Map mit Altitude
-* Worm mit Kollisionserkennung und Sprungfunktion
-* Experimentieren mit Gravitation
 
+Next Meylensteyne:
 __________________________________________________________________________________________
-
-Readme nachziehen
-Refactoring:
-	* Magic numbers entfernen, in config verschieben und sinnvollen Namen geben *CHECK*
-	* Ordnerstruktur: gui und ui in Frontend, map und worms in Backend *CHECK*
-	* in Worm-Klasse, Move-Funktion optimieren *CHECK*, *CHECK*
-	
-Sprungfunktion:
-	* Keine seitliche Bewegung in der Luft initiieren *CHECK*
+Clean-Up Sprint:
+Refactoring
+	* Readme nachziehen / Issues
+Sprungfunktion
 	* Richtungstaste ist bereits gedrückt, wenn Sprungtaste gedrückt wird: Sprung in Richtung
-	* Bewegung in diese Richtung nur so lange, wie die Richtungstaste gedrückt wird
-	* userListener anpassen
-	
-Zeit nehmen von Mapgeneratoren
-
-Collision check iterativ, falls man sich mehr als einen Pixel bewegt, der die Anzahl der noch möglichen Pixel zurückgibt
-Check auf Maprand oben und unten
-
+Collision checks
+	(* Iterativ, falls man sich mehr als einen Pixel bewegt, der die Anzahl der noch möglichen Pixel zurückgibt)
+	* Check auf Maprand oben und unten
 Mehrere Würmer auf der Map mit Wechselfunktion
-	* Mehrere Würmer erzeugen *CHECK*
-	* aktiven Wurm, es darf nur ein Wurm aktiv sein
 	* Tab Wurm wechseln
-	* Teams, mit Wurmfarbe je nach Team *CHECK*
 		* Wechseln nur innerhalb eines Teams
-Zeitanzeige
-	* Zeit mit 0 initiieren
-	* Zeitanzeige in GUI
-	* Thread für Zeitaktualisierung
+Temp Debug Map hinzufügen
+	* Für schnellere Ladezeit
+__________________________________________________________________________________________
+Deathly Sprint:
+Waffen
+	* Prod
+	* Bille (Opt: Mit Munni)
+		* Schaden
+Ui
+	* Worm health
+	* Total health
+	* Weapon select option
+__________________________________________________________________________________________	
+
