@@ -52,15 +52,6 @@ def inputLoop(ui):
 		if nextRound:
 			initiateNextRound()
 	
-def gravityLoop():
-	global running, players
-	
-	while running:
-		time.sleep(0.01)
-		for player in players:
-			for worm in player.worms:
-				worm.move("down")
-	
 def mainLoop():
 	global map, running, activePlayer
 	
@@ -74,10 +65,8 @@ def mainLoop():
 
 	running = True
 	
-	gravityThread = threading.Thread(target=gravityLoop)
 	outputThread = threading.Thread(target=outputLoop, args=(gui,))
 	
-	gravityThread.start()
 	outputThread.start()
 	initiateNextRound()
 	inputLoop(ui)
