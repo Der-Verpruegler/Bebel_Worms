@@ -102,11 +102,11 @@ Check auf Maprand oben und unten
 
 Mehrere Würmer auf der Map mit Wechselfunktion
 	* Mehrere Würmer erzeugen *CHECK*
-	* aktiven Wurm, es darf nur ein Wurm aktiv sein
-	* Tab Wurm wechseln
+	* aktiven Wurm, es darf nur ein Wurm aktiv sein *CHECK*
+	* Tab Wurm wechseln *CHECK*
 	* Teams, mit Wurmfarbe je nach Team *CHECK*
 		* Wechseln nur innerhalb eines Teams
 Zeitanzeige
-	* Zeit mit 0 initiieren
-	* Zeitanzeige in GUI
-	* Thread für Zeitaktualisierung
+	* Zeit mit 0 initiieren *CHECK*
+	* Zeitanzeige in GUI *CHECK*
+	* Thread für Zeitaktualisierung <- wird derzeit nicht gebraucht, da Sekundengenauigkeit ausreicht

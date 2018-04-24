@@ -17,7 +17,8 @@ class Player():
 		self.worms = np.empty(config.NUMWORMSPERPLAYER, dtype=worm.Worm)
 		for i in range(config.NUMWORMSPERPLAYER):
 			self.worms[i] = worm.Worm(config.player_colours[id], map)
-
+		self.activeWormIdx = 0
+			
 		self.total_health = 0
 
 		self.items = defaultdict()
@@ -45,6 +46,12 @@ class Player():
 		self.activated_item = selected
 		return
 
+	def getActiveWorm(self):
+		return self.worms[self.activeWormIdx]
+		
+	def switch_worm(self):
+		self.activeWormIdx = (self.activeWormIdx + 1) % config.NUMWORMSPERPLAYER
+		
 	def modify_total_health(self):
 		"""
 		Captures aggregated health points
