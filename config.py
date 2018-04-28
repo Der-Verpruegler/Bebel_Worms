@@ -15,12 +15,14 @@ TIMEPERROUND = 60
 
 ITERATIONSPERSECOND = 60
 
-GENERATIONSTYLE = "Proving Grounds"
+GENERATIONSTYLE = "Dev Test"
+#GENERATIONSTYLE = "North Country"
+#GENERATIONSTYLE = "Proving Grounds"
 
 terrain_types = {
-"GRASS": {"colour": [110, 163, 20], "solid":True},
+"GRASS": [{"colour": [110, 163, 20], "solid":True}],
 
-"DARKGRASS": {"colour": [102, 143, 0], "solid":True},
+"DARKGRASS": [{"colour": [102, 143, 0], "solid":True}],
 
 "AIR": [{"colour": [115, 127, 255], "solid": False},
 {"colour": [120, 135, 245], "solid": False},
@@ -38,7 +40,7 @@ terrain_types = {
 {"colour": [115, 21, 0], "solid": True},
 {"colour": [109, 37, 0], "solid": True}],
 
-"CLOUD": {"colour": [220, 220, 255], "solid": False}
+"CLOUD": [{"colour": [220, 220, 255], "solid": False}]
 }
 
 SHARE_EARTHCORE = 0.02
