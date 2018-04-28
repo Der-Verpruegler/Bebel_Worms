@@ -14,26 +14,27 @@ class MapGenerator:
 		if config.GENERATIONSTYLE == "Mystic Peaks":
 			self.style_mystic_peaks(colours, solidity)
 		if config.GENERATIONSTYLE == "Dev Test":
-			self.style_dev_test(colours, solidity)			
+			self.style_dev_test(colours, solidity)
 
-	def generate_field(self, col, row, terrain_type, colours, solidity):
+	def generate_fields(self, col, row_start, row_end, choice, colours, solidity, single_field=False):
 		"""
-		Generates a field for a specific coordinate.
+		Generates one or multiple fields for a specific coordinate at once.
+		Use row_start, row_start + 1  to generate one field.
+
+		Args:
 		col = x-axis
 		row = y-axis
-		terrain_type = dictionary entry
+		choice = dictionary entry in terrain_type
 		colours, solidity = arrays keeping track of map structure
-		"""
-		colours[col, row] = terrain_type["colour"]
-		solidity[col, row] = terrain_type["solid"]
 
-	def generate_mult_field(self, col, row_start, row_end, choice, colours, solidity):
-		""" 
-		Generates multiple fields at once, faster than generate_field()
 		So far: still per column.
 		"""
-		colours[col, row_start:row_end] = [terrain_type["colour"] for terrain_type in choice]
-		solidity[col, row_start:row_end] = [terrain_type["solid"] for terrain_type in choice]
+		if single_field:
+			colours[col, row_start] = choice["colour"]
+			solidity[col, row_start] = choice["solid"]
+		if not single_field:
+			colours[col, row_start:row_end] = [terrain_type["colour"] for terrain_type in choice]
+			solidity[col, row_start:row_end] = [terrain_type["solid"] for terrain_type in choice]
 
 	def field_filler(self, process, colours, solidity):
 		"""
@@ -49,11 +50,11 @@ class MapGenerator:
 			# Save time I (Air is filled up until split)
 			split = process[col]
 			terrain_type = np.random.choice(config.terrain_types["AIR"], split)
-			self.generate_mult_field(col, 0, split, terrain_type, colours, solidity)
+			self.generate_fields(col, 0, split, terrain_type, colours, solidity)
 
 			# Save time II (Earth is filled up from below)
 			terrain_type = np.random.choice(config.terrain_types["EARTHCORE"], 10)
-			self.generate_mult_field(col, MAP_HEIGHT - SH_CORE, MAP_HEIGHT, terrain_type, colours, solidity)
+			self.generate_fields(col, MAP_HEIGHT - SH_CORE, MAP_HEIGHT, terrain_type, colours, solidity)
 
 			# Random filling rest, hard to optimize
 			for row in range(split, MAP_HEIGHT - SH_CORE):
@@ -65,52 +66,57 @@ class MapGenerator:
 					terrain_type = np.random.choice(config.terrain_types["SOIL"])
 				else:
 					terrain_type = np.random.choice(config.terrain_types["EARTHCORE"])
-				#print(terrain_type)
-				self.generate_field(col, row, terrain_type, colours, solidity)
+				self.generate_fields(col, row, row+1, terrain_type, colours, solidity, single_field=True)
 
 	def create_caves(self, where):
-		""" Template function to add caves into map (subsequent) """
+		"""
+		Template function to add caves into map (subsequent)
+		"""
 		pass
 
 	def style_dev_test(self, colours, solidity):
 		"""
 		Optimized Map - simply for dev purposes
 		"""
-		def mass_fill(terrain, property, half_map, width):
-			return [[terrain[property] for row in range(half_map)] for col in range(width)]
+		def mass_fill(terrain, _property, half_map, width):
+			"""
+			Helper function to save code
+			"""
+			return [[terrain[_property] for row in range(half_map)] for col in range(width)]
 
-		start = time.clock()		
+		start = time.clock()
 		MAP_HEIGHT = config.RENDERAREAHEIGHT
 		MAP_WIDTH = config.RENDERAREAWIDTH
 		half_map = int(MAP_HEIGHT/2)
-		colours[0:MAP_WIDTH, 0:half_map] = mass_fill(config.terrain_types["AIR"][0], 'colour', half_map, MAP_WIDTH)
-		solidity[0:MAP_WIDTH, 0:half_map] = mass_fill(config.terrain_types["AIR"][0], 'solid', half_map, MAP_WIDTH)
-		colours[0:MAP_WIDTH, half_map:MAP_HEIGHT] = mass_fill(config.terrain_types["GRASS"][0], 'colour', half_map, MAP_WIDTH)
-		solidity[0:MAP_WIDTH, half_map:MAP_HEIGHT] = mass_fill(config.terrain_types["GRASS"][0], 'solid', half_map, MAP_WIDTH)
+		air = config.terrain_types["AIR"][0]
+		grass = config.terrain_types["GRASS"][0]
+		colours[0:MAP_WIDTH, 0:half_map] = mass_fill(air, 'colour', half_map, MAP_WIDTH)
+		solidity[0:MAP_WIDTH, 0:half_map] = mass_fill(air, 'solid', half_map, MAP_WIDTH)
+		colours[0:MAP_WIDTH, half_map:MAP_HEIGHT] = mass_fill(grass, 'colour', half_map, MAP_WIDTH)
+		solidity[0:MAP_WIDTH, half_map:MAP_HEIGHT] = mass_fill(grass, 'solid', half_map, MAP_WIDTH)
 		print("Total time: ", time.clock() - start)
 
 	def style_proving_grounds(self, colours, solidity):
 		"""
 		Creates a simple map, that is horizontal and split
-		half solid half permeable. 
-		Out: Process, int-array indicating per column 
+		half solid half permeable.
+		Out: Process, int-array indicating per column
 		in which row the solid/non-solid split is.
 		"""
 		# Fill the array
 		start = time.clock()
 		process = np.full((config.RENDERAREAWIDTH), np.int(config.RENDERAREAHEIGHT / 2))
-		last_step = time.clock()
 		self.field_filler(process, colours, solidity)
 		print("Total time: ", time.clock() - start)
 
 	def style_north_country(self, colours, solidity):
 		"""
-		Creates a simple map, that is hilly. 
-		Out: Process, int-array indicating per column 
+		Creates a simple map, that is hilly.
+		Out: Process, int-array indicating per column
 		in which row the solid/non-solid split is.
 		"""
 		start = time.clock()
-		process = np.random.randint(0, config.RENDERAREAHEIGHT, config.RENDERAREAWIDTH)		
+		process = np.random.randint(0, config.RENDERAREAHEIGHT, config.RENDERAREAWIDTH)
 		process = self.smoother(process, 2)
 		process = self.blocker(process, 12)
 		process = self.smoother(process, 17)
@@ -125,7 +131,7 @@ class MapGenerator:
 		in which row the solid/non-solid split is.
 		"""
 		start = time.clock()
-		process = np.random.randint(0, config.RENDERAREAHEIGHT, config.RENDERAREAWIDTH)		
+		process = np.random.randint(0, config.RENDERAREAHEIGHT, config.RENDERAREAWIDTH)
 		process = self.extremizer(process, 8)
 		process = self.smoother(process, 5)
 		process = self.blocker(process, 15)

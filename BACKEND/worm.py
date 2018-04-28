@@ -4,11 +4,12 @@ import config
 
 
 class Worm():
-	def __init__(self, colour, map):
+	def __init__(self, team_colour, map):
 		self.width = config.WORM_WIDTH
 		self.height = config.WORM_HEIGHT
 		self.map = map
-		self._colour = colour;
+		self._team_colour = team_colour
+		self.health = config.WORM_HEALTH
 		self.spawn()
 
 
@@ -56,13 +57,19 @@ class Worm():
 
 
 	def eval_hitbox_collision(self, col, row):
-		""" A wrapper to save lines of code """
+		"""
+		A wrapper to save lines of code
+		Checks a hitbox for collision.
+		"""
 		box = self.get_hitbox(col, row)
 		return self.check_for_box_collision(box)
 
 
 	def wrap_set_map_solidity(self, col, row, boolean):
-		""" A wrapper to save lines of code """
+		"""
+		A wrapper to save lines of code
+		Modifies the solidity-array by a box.
+		"""
 		box = self.get_hitbox(col, row)
 		self.map.box_set_solidity(box, boolean)
 
@@ -124,3 +131,9 @@ class Worm():
 				self.corner_row += 1
 			# Whatever the endposition is, make it solid
 			self.wrap_set_map_solidity(self.corner_col, self.corner_row, True)
+
+	def move_new(self, direction):
+		"""
+		Args: "left", "right", "up"
+		"""
+		# ???
