@@ -136,4 +136,10 @@ class Worm():
 		"""
 		Args: "left", "right", "up"
 		"""
-		# ???
+		mapping = {'up': [-1, 0], 'down': [1, 0], 'left': [0, -1], 'right': [0,1]}
+		self.wrap_set_map_solidity(self.corner_col, self.corner_row, False)
+		collision = self.eval_hitbox_collision(self.corner_col + mapping[direction][1], self.corner_row + mapping[direction][0])
+		if not collision:
+			self.corner_col += mapping[direction][1]
+			self.corner_row += mapping[direction][0]
+		self.wrap_set_map_solidity(self.corner_col, self.corner_row, True)
