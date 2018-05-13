@@ -13,20 +13,34 @@ class MapGenerator:
 			self.style_north_country(colours, solidity)
 		if config.GENERATIONSTYLE == "Mystic Peaks":
 			self.style_mystic_peaks(colours, solidity)
+		if config.GENERATIONSTYLE == "Dev Test":
+			self.style_dev_test(colours, solidity)
 
-	def generate_field(self, col, row, terrain_type, colours, solidity):
-		colours[col, row] = terrain_type["colour"]
-		solidity[col, row] = terrain_type["solid"]
+	def generate_fields(self, col, row_start, row_end, choice, colours, solidity, single_field=False):
+		"""
+		Generates one or multiple fields for a specific coordinate at once.
+		Use row_start, row_start + 1  to generate one field.
 
-	def generate_mult_field(self, col, start, end, choice, colours, solidity):
-		""" Generates multiple fields at once, faster than generate_field()"""
-		colours[col, start:end] = [terrain_type["colour"] for terrain_type in choice]
-		solidity[col, start:end] = [terrain_type["solid"] for terrain_type in choice]
+		Args:
+		col = x-axis
+		row = y-axis
+		choice = dictionary entry in terrain_type
+		colours, solidity = arrays keeping track of map structure
+
+		So far: still per column.
+		"""
+		if single_field:
+			colours[col, row_start] = choice["colour"]
+			solidity[col, row_start] = choice["solid"]
+		if not single_field:
+			colours[col, row_start:row_end] = [terrain_type["colour"] for terrain_type in choice]
+			solidity[col, row_start:row_end] = [terrain_type["solid"] for terrain_type in choice]
 
 	def field_filler(self, process, colours, solidity):
 		"""
-		Fills the map with fields, regarding the solidity split
-		pattern (process) and adds random jitter
+		Fills the map with fields, regarding the split
+		pattern (process) defined by solidity and adds random jitter
+		in the overlap areas.
 		"""
 		# Abbreviate vars for shorter lines
 		MAP_HEIGHT = config.RENDERAREAHEIGHT
@@ -36,61 +50,78 @@ class MapGenerator:
 			# Save time I (Air is filled up until split)
 			split = process[col]
 			terrain_type = np.random.choice(config.terrain_types["AIR"], split)
-			self.generate_mult_field(col, 0, split, terrain_type, colours, solidity)
+			self.generate_fields(col, 0, split, terrain_type, colours, solidity)
 
 			# Save time II (Earth is filled up from below)
 			terrain_type = np.random.choice(config.terrain_types["EARTHCORE"], 10)
-			self.generate_mult_field(col, MAP_HEIGHT - SH_CORE, MAP_HEIGHT, terrain_type, colours, solidity)
+			self.generate_fields(col, MAP_HEIGHT - SH_CORE, MAP_HEIGHT, terrain_type, colours, solidity)
 
-			# Random filling, hard to optimize
+			# Random filling rest, hard to optimize
 			for row in range(split, MAP_HEIGHT - SH_CORE):
 				if row < split + np.random.randint(5, 10):
-					terrain_type = config.terrain_types["GRASS"]
+					terrain_type = np.random.choice(config.terrain_types["GRASS"])
 				elif row < split + np.random.randint(18, 20):
-					terrain_type = config.terrain_types["DARKGRASS"]
+					terrain_type = np.random.choice(config.terrain_types["DARKGRASS"])
 				elif row < (MAP_HEIGHT - np.random.randint(SH_CORE, np.random.randint(30, 60))):
 					terrain_type = np.random.choice(config.terrain_types["SOIL"])
 				else:
 					terrain_type = np.random.choice(config.terrain_types["EARTHCORE"])
-				self.generate_field(col, row, terrain_type, colours, solidity)
+				self.generate_fields(col, row, row+1, terrain_type, colours, solidity, single_field=True)
 
 	def create_caves(self, where):
-		""" Template function to add caves into map (subsequent) """
+		"""
+		Template function to add caves into map (subsequent)
+		"""
 		pass
+
+	def style_dev_test(self, colours, solidity):
+		"""
+		Optimized Map - simply for dev purposes
+		"""
+		def mass_fill(terrain, _property, half_map, width):
+			"""
+			Helper function to save code
+			"""
+			return [[terrain[_property] for row in range(half_map)] for col in range(width)]
+
+		start = time.clock()
+		MAP_HEIGHT = config.RENDERAREAHEIGHT
+		MAP_WIDTH = config.RENDERAREAWIDTH
+		half_map = int(MAP_HEIGHT/2)
+		air = config.terrain_types["AIR"][0]
+		grass = config.terrain_types["GRASS"][0]
+		colours[0:MAP_WIDTH, 0:half_map] = mass_fill(air, 'colour', half_map, MAP_WIDTH)
+		solidity[0:MAP_WIDTH, 0:half_map] = mass_fill(air, 'solid', half_map, MAP_WIDTH)
+		colours[0:MAP_WIDTH, half_map:MAP_HEIGHT] = mass_fill(grass, 'colour', half_map, MAP_WIDTH)
+		solidity[0:MAP_WIDTH, half_map:MAP_HEIGHT] = mass_fill(grass, 'solid', half_map, MAP_WIDTH)
+		print("Total time: ", time.clock() - start)
 
 	def style_proving_grounds(self, colours, solidity):
 		"""
 		Creates a simple map, that is horizontal and split
-		half solid half permeable. 
-		Out: Process, int-array indicating per column 
+		half solid half permeable.
+		Out: Process, int-array indicating per column
 		in which row the solid/non-solid split is.
 		"""
 		# Fill the array
-		process = np.full((config.RENDERAREAWIDTH), np.int(config.RENDERAREAHEIGHT / 2))
 		start = time.clock()
-		print("Start: ", start)
-		last_step = time.clock()
+		process = np.full((config.RENDERAREAWIDTH), np.int(config.RENDERAREAHEIGHT / 2))
 		self.field_filler(process, colours, solidity)
-		print("Field-Filler: ", time.clock() - last_step)
+		print("Total time: ", time.clock() - start)
 
 	def style_north_country(self, colours, solidity):
 		"""
-		Creates a simple map, that is hilly. 
-		Out: Process, int-array indicating per column 
+		Creates a simple map, that is hilly.
+		Out: Process, int-array indicating per column
 		in which row the solid/non-solid split is.
 		"""
-		process = np.random.randint(0, config.RENDERAREAHEIGHT, config.RENDERAREAWIDTH)
 		start = time.clock()
-		print("Start: ", start)
+		process = np.random.randint(0, config.RENDERAREAHEIGHT, config.RENDERAREAWIDTH)
 		process = self.smoother(process, 2)
-		print("Smoother: ", time.clock()- start)
 		process = self.blocker(process, 12)
-		print("Blocker: ", time.clock()- start)
 		process = self.smoother(process, 17)
-		print("Smoother: ", time.clock()- start)
-		last_step = time.clock()
 		self.field_filler(process, colours, solidity)
-		print("Field-Filler: ", time.clock() - last_step)
+		print("Total time: ", time.clock() - start)
 
 
 	def style_mystic_peaks(self, colours, solidity):
@@ -99,20 +130,14 @@ class MapGenerator:
 		Out: Process, int-array indicating per column
 		in which row the solid/non-solid split is.
 		"""
-		process = np.random.randint(0, config.RENDERAREAHEIGHT, config.RENDERAREAWIDTH)
 		start = time.clock()
-		print("Start: ", start)
+		process = np.random.randint(0, config.RENDERAREAHEIGHT, config.RENDERAREAWIDTH)
 		process = self.extremizer(process, 8)
-		print("Extremizer: ", time.clock()- start)
 		process = self.smoother(process, 5)
-		print("Smoother: ", time.clock()- start)
 		process = self.blocker(process, 15)
-		print("Blocker: ", time.clock()- start)
 		process = self.smoother(process, 15)
-		print("Smoother: ", time.clock()- start)
-		last_step = time.clock()
 		self.field_filler(process, colours, solidity)
-		print("Field-Filler: ", time.clock() - last_step)
+		print("Total time: ", time.clock() - start)
 
 	def extremizer(self, process, window):
 		""" Extremizes by either min/max-ing in window"""

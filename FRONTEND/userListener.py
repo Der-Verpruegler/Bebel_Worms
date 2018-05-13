@@ -1,13 +1,14 @@
+# pylint: disable=W0312, E1101
+import pygame
 import config
 
-import pygame
 
 class userListener:
 	def __init__(self):
 		pressed = pygame.key.get_pressed()
 		self.tabStillPressed = pressed[pygame.K_TAB]
 		self.escStillPressed = pressed[pygame.K_ESCAPE]
-	
+
 	def getNextEvent(self, players, activePlayer):
 		nextRound = False
 		
