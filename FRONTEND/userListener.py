@@ -1,7 +1,8 @@
 # pylint: disable=W0312, E1101
 import pygame
-import config
+import time
 
+import config
 
 class userListener:
 	def __init__(self):
@@ -25,13 +26,14 @@ class userListener:
 		movementList = []
 		if pressed[pygame.K_SPACE]:
 			if pressed[pygame.K_LEFT]:
-				for i in range(0, config.WORM_JUMP_HEIGHT / 2):
+				for i in range(0, config.WORM_JUMP_HEIGHT):
 					movementList.append("up")
 					movementList.append("left")
 			elif pressed[pygame.K_RIGHT]:
-				for i in range(0, config.WORM_JUMP_HEIGHT / 2):
+				for i in range(0, config.WORM_JUMP_HEIGHT):
 					movementList.append("up")
 					movementList.append("right")
+				print(config.WORM_JUMP_HEIGHT / 2)
 			else:
 				for i in range(0, config.WORM_JUMP_HEIGHT):
 					movementList.append("up")
@@ -46,10 +48,21 @@ class userListener:
 			self.escStillPressed = True
 			nextRound = True
 			
-		players[activePlayer].getActiveWorm().move(movementList)
+		for movement in movementList:
+			print("Moving " + movement)
+			players[activePlayer].getActiveWorm().move(movement)
+			time.sleep(0.03)
 				
-		for player in players:
-			for worm in player.worms:
-				worm.move(["down"])
+		worms_on_solid = [False] * config.NUMPLAYERS * config.NUMWORMSPERPLAYER
+		
+		while not all(worm == True for worm in worms_on_solid):
+			i = 0
+			for player in players:
+				for worm in player.worms:
+					worms_on_solid[i] = worm.move("down")
+					worms_on_solid[i] = worm.move("down")
+					worms_on_solid[i] = worm.move("down")
+					i += 1
+					time.sleep(0.001)
 				
 		return (True, nextRound)

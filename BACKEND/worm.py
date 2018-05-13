@@ -12,7 +12,6 @@ class Worm():
 		self.health = config.WORM_HEALTH
 		self.spawn()
 
-
 	def spawn(self):
 		""" Find a random valid spawn point on map """
 		valid_spawn = False
@@ -73,66 +72,7 @@ class Worm():
 		box = self.get_hitbox(col, row)
 		self.map.box_set_solidity(box, boolean)
 
-
-	def move(self, direction, speed=1):
-		""" All movements of worm """
-
-		def horizontal_move(speed):
-			""" Generic function for horizontal moves """
-			# TODO: Switch, if speed>1
-			current_vert_gain = 0
-			while current_vert_gain < config.WORM_VERT_GAIN:
-				# Make current hitbox "invisible", important for collision detection
-				self.wrap_set_map_solidity(self.corner_col, self.corner_row, False)
-				has_ground_below = self.eval_hitbox_collision(self.corner_col, self.corner_row+1)
-				collision = self.eval_hitbox_collision(self.corner_col+speed, self.corner_row-current_vert_gain)
-
-				if has_ground_below and not collision:
-					self.corner_col += speed
-					self.corner_row -= current_vert_gain
-					# time.sleep(j/10) # If uphill: slow worm! To be discussed!
-					break
-				current_vert_gain += 1
-			# Whatever the endposition is, make it solid
-			self.wrap_set_map_solidity(self.corner_col, self.corner_row, True)
-
-
-		if direction == "left" and not self.corner_col-1 < 0:
-			horizontal_move(-speed) # TODO: get rid of default value!
-
-
-		elif direction == "right" and not self.corner_col+1 > (config.RENDERAREAWIDTH-config.WORM_WIDTH):
-			horizontal_move(speed) # TODO: get rid of default value!
-
-
-		elif direction == "up":
-			# Make current hitbox "invisible", important for collision detection
-			self.wrap_set_map_solidity(self.corner_col, self.corner_row, False)
-			has_ground_below = self.eval_hitbox_collision(self.corner_col, self.corner_row + 1)
-			if has_ground_below:
-				current_vert_gain = 0
-				while current_vert_gain < config.WORM_JUMP_HEIGHT:
-					k = max(1, current_vert_gain)
-					collision = self.eval_hitbox_collision(self.corner_col, self.corner_row-k)
-					if collision:
-						break
-					self.corner_row -= 1
-					self.wrap_set_map_solidity(self.corner_col, self.corner_row, False)
-					current_vert_gain += 1
-			# Whatever the endposition is, make it solid
-			self.wrap_set_map_solidity(self.corner_col, self.corner_row, True)
-
-
-		elif direction == "down":
-			# Make current hitbox "invisible", important for collision detection
-			self.wrap_set_map_solidity(self.corner_col, self.corner_row, False)
-			collision = self.eval_hitbox_collision(self.corner_col, self.corner_row + 1)
-			if not collision:
-				self.corner_row += 1
-			# Whatever the endposition is, make it solid
-			self.wrap_set_map_solidity(self.corner_col, self.corner_row, True)
-
-	def move_new(self, direction):
+	def move(self, direction):
 		"""
 		Args: "left", "right", "up"
 		"""
@@ -143,3 +83,4 @@ class Worm():
 			self.corner_col += mapping[direction][1]
 			self.corner_row += mapping[direction][0]
 		self.wrap_set_map_solidity(self.corner_col, self.corner_row, True)
+		return self.eval_hitbox_collision(self.corner_col, self.corner_row + 1)

@@ -49,7 +49,6 @@ def inputLoop(ui):
 	global running, players, activePlayer
 
 	while running:
-		time.sleep(0.03) #0.07 is good
 		running, nextRound = ui.getNextEvent(players, activePlayer)
 		if nextRound:
 			initiateNextRound()
